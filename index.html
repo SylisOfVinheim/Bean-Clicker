@@ -879,7 +879,7 @@
         state.sealMilestonesEarned = milestones;
         state.beans = 0;
         state.owned = makeOwned(upgrades);
-        state.rebirthCount += 1;
+        state.rebirthCount += reward;
         showToast(`A fresh start! The Crown grants ${numberFormat.format(reward)} royal seal${reward === 1 ? "" : "s"}.`);
         render();
         save();
