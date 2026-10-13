@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3ead7">
+  <title>Bean There, Done That — A British Bean Clicker</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f3ead7;
+      --cream: #fffaf0;
+      --ink: #243b2e;
+      --muted: #687366;
+      --green: #315c42;
+      --green-dark: #234632;
+      --red: #a34035;
+      --gold: #d4a94f;
+      --line: #d8ccb5;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse at 12% 5%, rgba(255,255,255,.75), transparent 34rem),
+        repeating-linear-gradient(0deg, transparent 0 31px, rgba(83,69,43,.035) 32px),
+        var(--paper);
+    }
+
+    button { font: inherit; }
+
+    .page { width: min(1180px, calc(100% - 36px)); margin: 0 auto; padding: 20px 0 32px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark { display: grid; width: 44px; height: 44px; place-items: center; border: 2px solid var(--green); border-radius: 50%; font-size: 25px; }
+    .brand-name { margin: 0; font-size: 14px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    .brand-sub { margin: 3px 0 0; color: var(--muted); font-size: 12px; letter-spacing: .04em; }
+    .save-note { color: var(--muted); font: 12px Arial, sans-serif; }
+
+    .masthead { margin: 24px 0 22px; text-align: center; }
+    .eyebrow { margin: 0 0 9px; color: var(--red); font-size: 12px; font-weight: bold; letter-spacing: .2em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(34px, 5vw, 52px); font-weight: 500; letter-spacing: -.04em; line-height: 1; }
+    .intro { margin: 9px auto 0; color: var(--muted); font-size: 15px; }
+
+    .game { display: grid; grid-template-columns: minmax(320px, .82fr) minmax(0, 1.18fr); gap: 20px; align-items: start; }
+    .panel { border: 1px solid var(--line); border-radius: 15px; background: rgba(255,250,240,.86); box-shadow: 0 10px 30px rgba(69,55,31,.07); }
+    .counter-panel { position: sticky; top: 16px; display: flex; min-height: min(650px, calc(100vh - 150px)); flex-direction: column; align-items: center; justify-content: center; padding: 30px 22px; overflow: hidden; animation: panel-arrive .55s both; }
+    .counter-label { margin: 0; color: var(--muted); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; }
+    .bean-count { margin: 8px 0 0; font-size: clamp(46px, 8vw, 76px); font-variant-numeric: tabular-nums; line-height: 1; }
+    .bean-unit { margin: 5px 0 19px; color: var(--green); font-size: 18px; font-style: italic; }
+    .bean-button {
+      position: relative;
+      display: grid;
+      width: min(250px, 58vw);
+      aspect-ratio: 1;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle at 36% 29%, #fffdf5, #efe2c6 76%);
+      box-shadow: inset 0 0 0 1px #e8dbc0, 0 11px 0 #d7c9ad, 0 17px 24px rgba(65,51,29,.15);
+      cursor: pointer;
+      transition: transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .18s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .bean-button::before { position: absolute; inset: 8px; border-radius: inherit; background: linear-gradient(135deg, rgba(255,255,255,.65), transparent 48%); content: ""; pointer-events: none; }
+    .bean-button:hover { transform: translateY(-4px) rotate(-2deg); }
+    .bean-button:active { transform: translateY(7px) scale(.98); box-shadow: inset 0 0 0 1px #e8dbc0, 0 4px 0 #d7c9ad, 0 8px 13px rgba(65,51,29,.12); }
+    .bean-button.is-clicking { animation: bean-tap .28s ease-out; }
+    .bean-button:focus-visible, button:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+    .bean-art { position: relative; z-index: 1; width: 72%; filter: drop-shadow(0 12px 7px rgba(58,48,29,.22)); user-select: none; animation: bean-hover 3.2s ease-in-out infinite; }
+    .bean-button.is-clicking .bean-art { animation: bean-spin .28s ease-out; }
+    .bean-pop { position: absolute; z-index: 2; top: 24%; left: 50%; color: var(--green-dark); font-size: 22px; font-weight: 700; text-shadow: 0 1px 0 white; white-space: nowrap; pointer-events: none; animation: bean-pop .85s ease-out forwards; }
+    .tap-hint { margin: 27px 0 0; color: var(--muted); font-size: 14px; }
+    .stats { display: flex; width: min(390px, 100%); justify-content: space-around; gap: 12px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); text-align: center; }
+    .stat strong { display: block; font-size: 19px; font-weight: 500; }
+    .stat span { color: var(--muted); font: 11px Arial, sans-serif; letter-spacing: .04em; }
+
+    .shop { min-width: 0; padding: 22px; animation: panel-arrive .65s .08s both; }
+    .shop-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding-bottom: 17px; border-bottom: 1px solid var(--line); }
+    .shop-heading h2 { margin: 0; font-size: 26px; font-weight: 500; }
+    .shop-heading span { color: var(--muted); font: 12px Arial, sans-serif; }
+    .shop-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 17px 0 0; padding: 5px; border-radius: 11px; background: #eee5d2; }
+    .shop-tab { padding: 10px 12px; border: 0; border-radius: 8px; color: var(--muted); background: transparent; cursor: pointer; transition: color .2s, background .2s, box-shadow .2s, transform .2s; }
+    .shop-tab[aria-selected="true"] { color: var(--green-dark); background: var(--cream); box-shadow: 0 2px 8px rgba(69,55,31,.12); }
+    .shop-tab:hover { transform: translateY(-1px); }
+    .tab-panel { padding-top: 18px; animation: tab-arrive .28s ease-out; }
+    .tab-title { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 0 0 6px; font-size: 22px; font-weight: 500; }
+    .tab-subtitle { margin: 0; color: var(--muted); font: 12px Arial, sans-serif; }
+    .upgrade-list { display: grid; gap: 11px; margin-top: 16px; }
+    .upgrade-list, .special-list { max-height: min(430px, 52vh); overflow-y: auto; overscroll-behavior: contain; padding: 2px 5px 4px 1px; scrollbar-color: #c9b995 transparent; scrollbar-width: thin; }
+    .upgrade {
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 13px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--ink);
+      background: #fffdf7;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .15s, background .15s, transform .15s;
+    }
+    .upgrade:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--green); background: #f5f5e9; }
+    .upgrade:disabled { cursor: not-allowed; opacity: .56; }
+    .upgrade-icon { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 9px; background: #f0ead9; font-size: 23px; }
+    .upgrade-name { display: block; font-size: 16px; font-weight: 700; }
+    .upgrade-desc { display: block; margin-top: 3px; color: var(--muted); font: 12px/1.35 Arial, sans-serif; }
+    .upgrade-price { white-space: nowrap; color: var(--green-dark); font-size: 14px; text-align: right; }
+    .upgrade-level { display: block; margin-top: 4px; color: var(--muted); font: 11px Arial, sans-serif; }
+    .tea-break { margin: 17px 0 0; padding: 12px 14px; border-left: 3px solid var(--gold); color: var(--muted); background: #f6f0e2; font-size: 13px; font-style: italic; line-height: 1.45; }
+    .rebirth { margin-top: 25px; padding-top: 22px; border-top: 1px solid var(--line); }
+    .rebirth-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+    .rebirth-heading h2 { margin: 0; font-size: 23px; font-weight: 500; }
+    .seal-count { color: var(--red); font-size: 14px; white-space: nowrap; }
+    .rebirth-copy { margin: 9px 0 13px; color: var(--muted); font: 13px/1.5 Arial, sans-serif; }
+    .rebirth-progress { height: 9px; overflow: hidden; border-radius: 999px; background: #e8dfcd; }
+    .rebirth-progress span { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--gold), #a98237); transition: width .2s ease; }
+    .rebirth-status { margin: 7px 0 12px; color: var(--muted); font: 12px Arial, sans-serif; }
+    .rebirth-button { width: 100%; padding: 12px 14px; border: 1px solid var(--red); border-radius: 9px; color: white; background: var(--red); cursor: pointer; transition: background .15s, opacity .15s; }
+    .rebirth-button:hover:not(:disabled) { background: #87342c; }
+    .rebirth-button:disabled { cursor: not-allowed; opacity: .48; }
+    .special-list { display: grid; gap: 10px; margin-top: 15px; }
+    .special-list .upgrade-icon { background: #f3ead3; }
+    .special-list .upgrade-price { color: #8a6724; }
+    .upgrade { animation: upgrade-arrive .35s both; }
+    .upgrade:nth-child(2) { animation-delay: 35ms; }
+    .upgrade:nth-child(3) { animation-delay: 70ms; }
+    .upgrade:nth-child(4) { animation-delay: 105ms; }
+    .upgrade:nth-child(5) { animation-delay: 140ms; }
+    .upgrade:nth-child(6) { animation-delay: 175ms; }
+    .upgrade:nth-child(7) { animation-delay: 210ms; }
+    .upgrade:nth-child(8) { animation-delay: 245ms; }
+
+    .toast { position: fixed; top: 20px; left: 50%; z-index: 2; padding: 10px 15px; border-radius: 999px; color: white; background: var(--green-dark); opacity: 0; transform: translate(-50%, -8px); transition: opacity .2s, transform .2s; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .footer { margin: 22px 0 0; color: var(--muted); font-size: 12px; text-align: center; }
+
+    @keyframes panel-arrive { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes tab-arrive { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes upgrade-arrive { from { opacity: 0; transform: translateY(8px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes bean-hover { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-7px) rotate(1deg); } }
+    @keyframes bean-tap { 0% { transform: scale(1); } 45% { transform: scale(.92) rotate(5deg); } 100% { transform: scale(1); } }
+    @keyframes bean-spin { 0% { transform: rotate(0) scale(1); } 55% { transform: rotate(18deg) scale(.86); } 100% { transform: rotate(0) scale(1); } }
+    @keyframes bean-pop { 0% { opacity: 0; transform: translate(-50%, 5px) scale(.8); } 15% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -55px) scale(1.12); } }
+
+    @media (max-width: 760px) {
+      .page { width: min(560px, calc(100% - 24px)); padding-top: 16px; }
+      .masthead { margin: 24px 0 20px; }
+      .game { grid-template-columns: 1fr; }
+      .counter-panel { position: static; min-height: 0; padding: 32px 18px; }
+      .bean-button { width: min(210px, 55vw); }
+      .shop { padding: 20px; }
+      .save-note { font-size: 11px; }
+    }
+    @media (max-width: 420px) {
+      .brand-name { font-size: 12px; }
+      .brand-sub { font-size: 10px; }
+      .shop { padding: 16px; }
+      .shop-heading span { font-size: 10px; }
+      .upgrade { grid-template-columns: 40px minmax(0, 1fr) auto; gap: 8px; padding: 11px 9px; }
+      .upgrade-icon { width: 38px; height: 38px; font-size: 20px; }
+      .upgrade-name { font-size: 14px; }
+      .upgrade-desc { font-size: 11px; }
+      .upgrade-price { font-size: 12px; }
+      .stats { gap: 5px; }
+      .stat span { font-size: 9px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">🫘</div>
+        <div>
+          <p class="brand-name">The Bean Counter</p>
+          <p class="brand-sub">Established this very afternoon</p>
+        </div>
+      </div>
+      <div class="save-note" id="save-note" aria-live="polite">Progress saved automatically</div>
+    </header>
+
+    <section class="masthead" aria-labelledby="game-title">
+      <p class="eyebrow">A most proper idle game</p>
+      <h1 id="game-title">Bean there,<br>done that.</h1>
+      <p class="intro">Put the kettle on. There are beans to be had.</p>
+    </section>
+
+    <div class="game">
+      <section class="panel counter-panel" aria-label="Bean counter">
+        <p class="counter-label">Your very respectable collection</p>
+        <p class="bean-count" id="bean-count" aria-live="polite">0</p>
+        <p class="bean-unit">beans, old bean</p>
+        <button class="bean-button" id="bean-button" type="button" aria-label="Click to collect beans">
+          <svg class="bean-art" viewBox="0 0 220 220" role="img" aria-label="A shiny baked bean">
+            <defs>
+              <linearGradient id="beanPaint" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#c75b35"/>
+                <stop offset=".48" stop-color="#96391f"/>
+                <stop offset="1" stop-color="#612818"/>
+              </linearGradient>
+              <radialGradient id="beanShine" cx=".36" cy=".2" r=".75">
+                <stop offset="0" stop-color="#f7a06b" stop-opacity=".9"/>
+                <stop offset=".55" stop-color="#d56a3b" stop-opacity=".15"/>
+                <stop offset="1" stop-color="#541f12" stop-opacity=".2"/>
+              </radialGradient>
+            </defs>
+            <path d="M39 113C31 80 52 45 91 31c31-11 71-1 88 24 17 26 10 59-10 89-19 29-49 52-82 46-29-5-43-38-48-77Z" fill="url(#beanPaint)" stroke="#6f2c19" stroke-width="4"/>
+            <path d="M39 113C31 80 52 45 91 31c31-11 71-1 88 24 17 26 10 59-10 89-19 29-49 52-82 46-29-5-43-38-48-77Z" fill="url(#beanShine)"/>
+            <path d="M62 70c9-15 24-25 42-29" fill="none" stroke="#ffcca0" stroke-linecap="round" stroke-width="9" opacity=".55"/>
+            <ellipse cx="120" cy="123" rx="29" ry="12" fill="#581f13" opacity=".24" transform="rotate(-31 120 123)"/>
+          </svg>
+        </button>
+        <p class="tap-hint">Give the bean a little tap, if you please.</p>
+        <div class="stats">
+          <div class="stat"><strong id="per-click">1</strong><span>BEANS / CLICK</span></div>
+          <div class="stat"><strong id="per-second">0</strong><span>BEANS / SECOND</span></div>
+          <div class="stat"><strong id="total-earned">0</strong><span>BEANS EARNED</span></div>
+        </div>
+      </section>
+
+      <aside class="panel shop" aria-labelledby="shop-title">
+        <div class="shop-heading">
+          <h2 id="shop-title">The Bean Emporium</h2>
+          <span>Provisions &amp; royal favours</span>
+        </div>
+        <div class="shop-tabs" role="tablist" aria-label="Shop sections">
+          <button class="shop-tab" id="tab-high-street" type="button" role="tab" aria-selected="true" aria-controls="panel-high-street" tabindex="0">High Street</button>
+          <button class="shop-tab" id="tab-rebirth" type="button" role="tab" aria-selected="false" aria-controls="panel-rebirth" tabindex="-1">Royal Rebirth <span id="tab-seal-count">0</span></button>
+        </div>
+        <section class="tab-panel" id="panel-high-street" role="tabpanel" aria-labelledby="tab-high-street">
+          <h3 class="tab-title">The High Street <span class="tab-subtitle">Good things cost beans</span></h3>
+          <div class="upgrade-list" id="upgrade-list"></div>
+          <p class="tea-break" id="tea-break">“A bean in the hand is worth two in the tin.” — probably someone's nan</p>
+        </section>
+        <section class="tab-panel" id="panel-rebirth" role="tabpanel" aria-labelledby="tab-rebirth" hidden>
+          <div class="rebirth-heading">
+            <h3 class="tab-title" id="rebirth-title">A Royal Rebirth</h3>
+            <span class="seal-count" id="seal-count">👑 0 royal seals</span>
+          </div>
+          <p class="rebirth-copy">Start afresh with the Crown's blessing. Your beans and High Street upgrades will be reset; lifetime beans and royal upgrades remain. Earn a royal seal for every new 10,000 lifetime beans.</p>
+          <div class="rebirth-progress" role="progressbar" aria-label="Progress towards next royal seal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="rebirth-progress"></span></div>
+          <p class="rebirth-status" id="rebirth-status">Earn 10,000 lifetime beans to qualify.</p>
+          <button class="rebirth-button" id="rebirth-button" type="button" disabled>Not quite time for a royal occasion</button>
+          <div class="special-list" id="special-list" aria-label="Royal upgrades"></div>
+        </section>
+      </aside>
+    </div>
+    <p class="footer">Best enjoyed with a cuppa. Biscuit dunking is entirely at your own risk.</p>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const upgrades = [
+        { id: "spoon", name: "A Better Spoon", icon: "🥄", description: "+1 bean with every click", baseCost: 15, rate: 1, kind: "click" },
+        { id: "biscuit", name: "Emergency Biscuit Tin", icon: "🍪", description: "+1 bean per second", baseCost: 25, rate: 1, kind: "auto" },
+        { id: "kettle", name: "The Office Kettle", icon: "🫖", description: "+5 beans per second", baseCost: 100, rate: 5, kind: "auto" },
+        { id: "allotment", name: "A Proper Allotment", icon: "🌱", description: "+20 beans per second", baseCost: 500, rate: 20, kind: "auto" },
+        { id: "bakery", name: "The Village Bakery", icon: "🥧", description: "+75 beans per second", baseCost: 2500, rate: 75, kind: "auto" },
+        { id: "bus", name: "The Bean Double-Decker", icon: "🚌", description: "+250 beans per second", baseCost: 12500, rate: 250, kind: "auto" },
+        { id: "pub", name: "The Crown & Bean", icon: "🍺", description: "+1,000 beans per second", baseCost: 80000, rate: 1000, kind: "auto" },
+        { id: "factory", name: "Her Majesty's Bean Works", icon: "🏭", description: "+5,000 beans per second", baseCost: 500000, rate: 5000, kind: "auto" }
+      ];
+      const royalUpgrades = [
+        { id: "royalWarrant", name: "Royal Bean Warrant", icon: "📜", description: "+25% to all bean gains per level", baseCost: 1, kind: "all" },
+        { id: "crownKettle", name: "The Crown's Kettle", icon: "👑", description: "+50% passive production per level", baseCost: 2, kind: "passive" },
+        { id: "goldenSpoon", name: "The Golden Spoon", icon: "🥄", description: "+5 beans per click per level", baseCost: 3, kind: "click" }
+      ];
+      const quotes = [
+        "“A bean in the hand is worth two in the tin.” — probably someone's nan",
+        "Keep calm and carry on collecting.",
+        "The kettle's on. The beans are coming in.",
+        "One does not simply have too many beans.",
+        "Splendid work. The village is talking about you."
+      ];
+      const elements = {
+        count: document.getElementById("bean-count"),
+        perClick: document.getElementById("per-click"),
+        perSecond: document.getElementById("per-second"),
+        total: document.getElementById("total-earned"),
+        shop: document.getElementById("upgrade-list"),
+        specialShop: document.getElementById("special-list"),
+        toast: document.getElementById("toast"),
+        quote: document.getElementById("tea-break"),
+        save: document.getElementById("save-note")
+      };
+      const numberFormat = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 1 });
+      const makeOwned = (items) => Object.fromEntries(items.map((item) => [item.id, 0]));
+      const freshState = () => ({
+        beans: 0, lifetimeEarned: 0, sealMilestonesEarned: 0,
+        owned: makeOwned(upgrades), royalSeals: 0, royalOwned: makeOwned(royalUpgrades)
+      });
+      let state = freshState();
+      let toastTimer;
+
+      try {
+        const saved = JSON.parse(localStorage.getItem("beanThereDoneThat"));
+        if (saved && Number.isFinite(saved.beans) && saved.beans >= 0) {
+          state.beans = saved.beans;
+          state.lifetimeEarned = Number.isFinite(saved.lifetimeEarned) && saved.lifetimeEarned >= 0
+            ? saved.lifetimeEarned
+            : Number.isFinite(saved.totalEarned) && saved.totalEarned >= 0 ? saved.totalEarned : 0;
+          state.sealMilestonesEarned = Number.isSafeInteger(saved.sealMilestonesEarned) && saved.sealMilestonesEarned >= 0
+            ? saved.sealMilestonesEarned
+            : 0;
+          state.royalSeals = Number.isSafeInteger(saved.royalSeals) && saved.royalSeals >= 0 ? saved.royalSeals : 0;
+          for (const upgrade of upgrades) {
+            const owned = saved.owned && saved.owned[upgrade.id];
+            state.owned[upgrade.id] = Number.isSafeInteger(owned) && owned >= 0 ? owned : 0;
+          }
+          for (const upgrade of royalUpgrades) {
+            const owned = saved.royalOwned && saved.royalOwned[upgrade.id];
+            state.royalOwned[upgrade.id] = Number.isSafeInteger(owned) && owned >= 0 ? owned : 0;
+          }
+        }
+      } catch (error) {
+        console.warn("Could not load saved bean progress.", error);
+      }
+
+      function ratePerSecond() {
+        const baseRate = upgrades.reduce((sum, upgrade) => sum + (upgrade.kind === "auto" ? state.owned[upgrade.id] * upgrade.rate : 0), 0);
+        return baseRate * globalMultiplier() * (1 + state.royalOwned.crownKettle * 0.5);
+      }
+
+      function clickPower() {
+        const basePower = 1 + state.owned.spoon + state.royalOwned.goldenSpoon * 5;
+        return basePower * globalMultiplier();
+      }
+
+      function globalMultiplier() {
+        return 1 + state.royalOwned.royalWarrant * 0.25;
+      }
+
+      function price(upgrade) {
+        return Math.floor(upgrade.baseCost * Math.pow(1.17, state.owned[upgrade.id]));
+      }
+
+      function renderShop() {
+        if (elements.shop.children.length !== upgrades.length) {
+          elements.shop.replaceChildren();
+          for (const upgrade of upgrades) {
+            const button = document.createElement("button");
+            button.className = "upgrade";
+            button.type = "button";
+            button.innerHTML = `<span class="upgrade-icon" aria-hidden="true">${upgrade.icon}</span>
+              <span><span class="upgrade-name">${upgrade.name}</span><span class="upgrade-desc">${upgrade.description}</span></span>
+              <span class="upgrade-price"><span class="upgrade-cost"></span><span class="upgrade-level"></span></span>`;
+            button.addEventListener("click", () => buy(upgrade));
+            elements.shop.append(button);
+          }
+        }
+        for (const upgrade of upgrades) {
+          const cost = price(upgrade);
+          const button = elements.shop.children[upgrades.indexOf(upgrade)];
+          button.disabled = state.beans < cost;
+          button.setAttribute("aria-label", `${upgrade.name}, costs ${numberFormat.format(cost)} beans`);
+          button.querySelector(".upgrade-cost").textContent = numberFormat.format(cost);
+          button.querySelector(".upgrade-level").textContent = `Owned: ${state.owned[upgrade.id]}`;
+        }
+      }
+
+      function renderRoyalShop() {
+        const list = document.getElementById("special-list");
+        if (list.children.length !== royalUpgrades.length) {
+          list.replaceChildren();
+          for (const upgrade of royalUpgrades) {
+            const button = document.createElement("button");
+            button.className = "upgrade";
+            button.type = "button";
+            button.innerHTML = `<span class="upgrade-icon" aria-hidden="true">${upgrade.icon}</span>
+              <span><span class="upgrade-name">${upgrade.name}</span><span class="upgrade-desc">${upgrade.description}</span></span>
+              <span class="upgrade-price"><span class="upgrade-cost"></span><span class="upgrade-level"></span></span>`;
+            button.addEventListener("click", () => buyRoyal(upgrade));
+            list.append(button);
+          }
+        }
+        for (const upgrade of royalUpgrades) {
+          const cost = Math.floor(upgrade.baseCost * Math.pow(2, state.royalOwned[upgrade.id]));
+          const button = list.children[royalUpgrades.indexOf(upgrade)];
+          button.disabled = state.royalSeals < cost;
+          button.setAttribute("aria-label", `${upgrade.name}, costs ${numberFormat.format(cost)} royal seals`);
+          button.querySelector(".upgrade-cost").textContent = `${numberFormat.format(cost)} seal${cost === 1 ? "" : "s"}`;
+          button.querySelector(".upgrade-level").textContent = `Owned: ${state.royalOwned[upgrade.id]}`;
+        }
+      }
+
+      function renderRebirth() {
+        const threshold = 10000;
+        const nextMilestone = (state.sealMilestonesEarned + 1) * threshold;
+        const newSeals = Math.max(0, Math.floor(state.lifetimeEarned / threshold) - state.sealMilestonesEarned);
+        const progress = Math.min(100, (state.lifetimeEarned % threshold) / threshold * 100);
+        document.getElementById("seal-count").textContent = `👑 ${numberFormat.format(state.royalSeals)} royal seal${state.royalSeals === 1 ? "" : "s"}`;
+        document.getElementById("tab-seal-count").textContent = numberFormat.format(state.royalSeals);
+        document.getElementById("rebirth-progress").style.width = `${progress}%`;
+        document.querySelector(".rebirth-progress").setAttribute("aria-valuenow", String(Math.floor(progress)));
+        document.getElementById("rebirth-status").textContent = newSeals > 0
+          ? `Ready for a royal occasion: ${numberFormat.format(newSeals)} seal${newSeals === 1 ? "" : "s"} to collect.`
+          : `${numberFormat.format(state.lifetimeEarned % threshold)} / ${numberFormat.format(threshold)} beans towards your next seal (${numberFormat.format(nextMilestone)} lifetime beans).`;
+        const button = document.getElementById("rebirth-button");
+        button.disabled = newSeals === 0;
+        button.textContent = newSeals > 0
+          ? `Rebirth for ${numberFormat.format(newSeals)} royal seal${newSeals === 1 ? "" : "s"}`
+          : "Not quite time for a royal occasion";
+        renderRoyalShop();
+      }
+
+      function render() {
+        elements.count.textContent = numberFormat.format(state.beans);
+        elements.perClick.textContent = numberFormat.format(clickPower());
+        elements.perSecond.textContent = numberFormat.format(ratePerSecond());
+        elements.total.textContent = numberFormat.format(state.lifetimeEarned);
+        renderShop();
+        renderRebirth();
+      }
+
+      function save() {
+        try {
+          localStorage.setItem("beanThereDoneThat", JSON.stringify(state));
+          elements.save.textContent = "Progress saved automatically";
+        } catch (error) {
+          elements.save.textContent = "Could not save progress";
+          console.warn("Could not save bean progress.", error);
+        }
+      }
+
+      function earn(amount) {
+        state.beans += amount;
+        state.lifetimeEarned += amount;
+        render();
+      }
+
+      function buy(upgrade) {
+        const cost = price(upgrade);
+        if (state.beans < cost) return;
+        state.beans -= cost;
+        state.owned[upgrade.id] += 1;
+        if (upgrade.kind === "click") state.clickPower += upgrade.rate;
+        elements.quote.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+        showToast(`${upgrade.name}. A splendid purchase.`);
+        render();
+        save();
+      }
+
+      function buyRoyal(upgrade) {
+        const cost = Math.floor(upgrade.baseCost * Math.pow(2, state.royalOwned[upgrade.id]));
+        if (state.royalSeals < cost) return;
+        state.royalSeals -= cost;
+        state.royalOwned[upgrade.id] += 1;
+        elements.quote.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+        showToast(`${upgrade.name}. The Crown approves.`);
+        render();
+        save();
+      }
+
+      function rebirth() {
+        const milestones = Math.floor(state.lifetimeEarned / 10000);
+        const reward = milestones - state.sealMilestonesEarned;
+        if (reward < 1) return;
+        state.royalSeals += reward;
+        state.sealMilestonesEarned = milestones;
+        state.beans = 0;
+        state.owned = makeOwned(upgrades);
+        showToast(`A fresh start! The Crown grants ${numberFormat.format(reward)} royal seal${reward === 1 ? "" : "s"}.`);
+        render();
+        save();
+      }
+
+      function showToast(message) {
+        elements.toast.textContent = message;
+        elements.toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => elements.toast.classList.remove("show"), 1800);
+      }
+
+      function clickBean() {
+        const beanButton = document.getElementById("bean-button");
+        beanButton.classList.remove("is-clicking");
+        void beanButton.offsetWidth;
+        beanButton.classList.add("is-clicking");
+        const pop = document.createElement("span");
+        pop.className = "bean-pop";
+        pop.setAttribute("aria-hidden", "true");
+        pop.textContent = `+${numberFormat.format(clickPower())}`;
+        beanButton.append(pop);
+        setTimeout(() => pop.remove(), 900);
+        setTimeout(() => beanButton.classList.remove("is-clicking"), 300);
+        earn(clickPower());
+      }
+
+      function selectTab(tab) {
+        const tabs = [...document.querySelectorAll('[role="tab"]')];
+        for (const item of tabs) {
+          const selected = item === tab;
+          item.setAttribute("aria-selected", String(selected));
+          item.tabIndex = selected ? 0 : -1;
+          document.getElementById(item.getAttribute("aria-controls")).hidden = !selected;
+        }
+      }
+
+      const shopTabs = [...document.querySelectorAll('[role="tab"]')];
+      for (const tab of shopTabs) {
+        tab.addEventListener("click", () => selectTab(tab));
+        tab.addEventListener("keydown", (event) => {
+          const currentIndex = shopTabs.indexOf(tab);
+          const nextIndex = event.key === "ArrowRight" || event.key === "ArrowDown"
+            ? (currentIndex + 1) % shopTabs.length
+            : event.key === "ArrowLeft" || event.key === "ArrowUp"
+              ? (currentIndex - 1 + shopTabs.length) % shopTabs.length
+              : event.key === "Home" ? 0 : event.key === "End" ? shopTabs.length - 1 : -1;
+          if (nextIndex < 0) return;
+          event.preventDefault();
+          shopTabs[nextIndex].focus();
+          selectTab(shopTabs[nextIndex]);
+        });
+      }
+
+      document.getElementById("bean-button").addEventListener("click", clickBean);
+      document.getElementById("rebirth-button").addEventListener("click", rebirth);
+      let previousTick = Date.now();
+      setInterval(() => {
+        const now = Date.now();
+        const elapsed = Math.min((now - previousTick) / 1000, 10);
+        previousTick = now;
+        const production = ratePerSecond() * elapsed;
+        if (production > 0) earn(production);
+      }, 250);
+      setInterval(save, 5000);
+      window.addEventListener("beforeunload", save);
+      render();
+    })();
+  </script>
+</body>
+</html>
