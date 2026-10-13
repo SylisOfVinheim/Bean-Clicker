@@ -125,6 +125,8 @@
     .upgrade-icon { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 9px; background: #f0ead9; font-size: 23px; }
     .upgrade-name { display: block; font-size: 16px; font-weight: 700; }
     .upgrade-desc { display: block; margin-top: 3px; color: var(--muted); font: 12px/1.35 Arial, sans-serif; }
+    .upgrade-yield-current, .upgrade-yield-purchase { display: block; overflow-wrap: anywhere; }
+    .upgrade-yield-purchase { margin-top: 2px; }
     .upgrade-price { max-width: 170px; color: var(--green-dark); font-size: 14px; text-align: right; overflow-wrap: anywhere; }
     .upgrade-level { display: block; margin-top: 4px; color: var(--muted); font: 11px Arial, sans-serif; }
     .purchase-amounts { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin: 14px 0 0; }
@@ -417,21 +419,21 @@
         </section>
       </aside>
     </div>
-    <p class="footer">Best enjoyed with a cuppa. Biscuit dunking is entirely at your own risk.<span class="version">Version 3.2.5</span></p>
+    <p class="footer">Best enjoyed with a cuppa. Biscuit dunking is entirely at your own risk.<span class="version">Version 3.4.6</span></p>
   </main>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
     (() => {
       const upgrades = [
-        { id: "spoon", name: "A Better Spoon", icon: "🥄", description: "+1 bean with every click", baseCost: 20, rate: 1, kind: "click" },
-        { id: "biscuit", name: "Emergency Biscuit Tin", icon: "🍪", description: "+1 bean per second", baseCost: 40, rate: 1, kind: "auto" },
-        { id: "kettle", name: "The Office Kettle", icon: "🫖", description: "+4 beans per second", baseCost: 175, rate: 4, kind: "auto" },
-        { id: "allotment", name: "A Proper Allotment", icon: "🌱", description: "+15 beans per second", baseCost: 900, rate: 15, kind: "auto" },
-        { id: "bakery", name: "The Village Bakery", icon: "🥧", description: "+60 beans per second", baseCost: 4500, rate: 60, kind: "auto" },
-        { id: "bus", name: "The Bean Double-Decker", icon: "🚌", description: "+220 beans per second", baseCost: 22000, rate: 220, kind: "auto" },
-        { id: "pub", name: "The Crown & Bean", icon: "🍺", description: "+850 beans per second", baseCost: 140000, rate: 850, kind: "auto" },
-        { id: "factory", name: "Her Majesty's Bean Works", icon: "🏭", description: "+4,000 beans per second", baseCost: 900000, rate: 4000, kind: "auto" }
+        { id: "spoon", name: "A Better Spoon", icon: "🥄", description: "+1 bean with every click · yield caps at 10×", baseCost: 20, rate: 1, kind: "click" },
+        { id: "biscuit", name: "Emergency Biscuit Tin", icon: "🍪", description: "+1 bean per second · yield caps at 10×", baseCost: 40, rate: 1, kind: "auto" },
+        { id: "kettle", name: "The Office Kettle", icon: "🫖", description: "+4 beans per second · yield caps at 10×", baseCost: 175, rate: 4, kind: "auto" },
+        { id: "allotment", name: "A Proper Allotment", icon: "🌱", description: "+15 beans per second · yield caps at 10×", baseCost: 900, rate: 15, kind: "auto" },
+        { id: "bakery", name: "The Village Bakery", icon: "🥧", description: "+60 beans per second · yield caps at 10×", baseCost: 4500, rate: 60, kind: "auto" },
+        { id: "bus", name: "The Bean Double-Decker", icon: "🚌", description: "+220 beans per second · yield caps at 10×", baseCost: 22000, rate: 220, kind: "auto" },
+        { id: "pub", name: "The Crown & Bean", icon: "🍺", description: "+850 beans per second · yield caps at 10×", baseCost: 140000, rate: 850, kind: "auto" },
+        { id: "factory", name: "Her Majesty's Bean Works", icon: "🏭", description: "+4,000 beans per second · yield caps at 10×", baseCost: 900000, rate: 4000, kind: "auto" }
       ];
       const beanColours = {
         classic: { name: "Classic", light: "#c75b35", middle: "#96391f", dark: "#612818", outline: "#6f2c19", shine: "#ffcca0" },
@@ -475,9 +477,9 @@
         { id: "solarCoat", name: "Solar Flare bean coat", kind: "color", cost: 1 }
       ];
       const royalUpgrades = [
-        { id: "royalWarrant", name: "Royal Bean Warrant", icon: "📜", description: "+15% to all bean gains per level", baseCost: 2, kind: "all" },
-        { id: "crownKettle", name: "The Crown's Kettle", icon: "👑", description: "+25% passive production per level", baseCost: 2, kind: "passive" },
-        { id: "goldenSpoon", name: "The Golden Spoon", icon: "🥄", description: "+2 beans per click per level", baseCost: 2, kind: "click" },
+        { id: "royalWarrant", name: "Royal Bean Warrant", icon: "📜", description: "+10% to all bean gains per level", baseCost: 2, kind: "all" },
+        { id: "crownKettle", name: "The Crown's Kettle", icon: "👑", description: "+15% passive production per level", baseCost: 2, kind: "passive" },
+        { id: "goldenSpoon", name: "The Golden Spoon", icon: "🥄", description: "+1 bean per click per level", baseCost: 2, kind: "click" },
         { id: "royalGranary", name: "The Royal Granary", icon: "🏰", description: "+10% passive production per level", baseCost: 3, kind: "granary" },
         { id: "beanCharter", name: "The Bean Charter", icon: "📯", description: "+5% to all bean gains per level", baseCost: 3, kind: "all" },
         { id: "silverThimble", name: "The Silver Thimble", icon: "🧤", description: "+3 beans per click per level", baseCost: 3, kind: "click" }
@@ -511,6 +513,8 @@
       };
       const numberFormat = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 1 });
       const compactNumberFormat = new Intl.NumberFormat("en-GB", { notation: "compact", maximumFractionDigits: 1 });
+      const maxUpgradeLevel = 1000;
+      const maxUpgradeYieldMultiplier = 10;
       const makeOwned = (items) => Object.fromEntries(items.map((item) => [item.id, 0]));
       let selectedPurchaseAmount = "1";
       const freshState = () => ({
@@ -561,7 +565,7 @@
           state.royalSeals = Number.isSafeInteger(saved.royalSeals) && saved.royalSeals >= 0 ? saved.royalSeals : 0;
           for (const upgrade of upgrades) {
             const owned = saved.owned && saved.owned[upgrade.id];
-            state.owned[upgrade.id] = Number.isSafeInteger(owned) && owned >= 0 ? owned : 0;
+            state.owned[upgrade.id] = Number.isSafeInteger(owned) && owned >= 0 ? Math.min(owned, maxUpgradeLevel) : 0;
           }
           rememberOwnedUpgrades();
           for (const upgrade of royalUpgrades) {
@@ -574,23 +578,64 @@
       }
 
       function ratePerSecond() {
-        const baseRate = upgrades.reduce((sum, upgrade) => sum + (upgrade.kind === "auto" ? state.owned[upgrade.id] * upgrade.rate : 0), 0);
+        const baseRate = upgrades.reduce((sum, upgrade) => sum + (upgrade.kind === "auto"
+          ? state.owned[upgrade.id] * upgrade.rate * upgradeYieldMultiplier(upgrade)
+          : 0), 0);
         const ascensionPassive = 1 + state.ascensionOwned.endlessHarvest * 0.5;
-        const royalPassive = 1 + state.royalOwned.crownKettle * 0.25 + state.royalOwned.royalGranary * 0.1;
+        const royalPassive = 1 + state.royalOwned.crownKettle * 0.15 + state.royalOwned.royalGranary * 0.1;
         return baseRate * globalMultiplier() * ascensionPassive * royalPassive;
       }
 
       function clickPower() {
-        const basePower = 1 + state.owned.spoon + state.royalOwned.goldenSpoon * 2 + state.royalOwned.silverThimble * 3 + state.ascensionOwned.quickHands * 10;
+        const spoon = upgrades[0];
+        const basePower = 1
+          + state.owned.spoon * upgradeYieldMultiplier(spoon)
+          + state.royalOwned.goldenSpoon
+          + state.royalOwned.silverThimble * 3
+          + state.ascensionOwned.quickHands * 10;
         return basePower * globalMultiplier();
       }
 
+      function upgradeYieldMultiplier(upgrade) {
+        return upgradeYieldMultiplierAtLevel(state.owned[upgrade.id]);
+      }
+
+      function upgradeYieldMultiplierAtLevel(level) {
+        return Math.min(maxUpgradeYieldMultiplier, 1 + Math.floor(Math.min(level, maxUpgradeLevel) / 100));
+      }
+
+      function upgradeOutputAtLevel(upgrade, level) {
+        const cappedLevel = Math.min(level, maxUpgradeLevel);
+        const baseOutput = cappedLevel * upgrade.rate * upgradeYieldMultiplierAtLevel(cappedLevel);
+        const global = globalMultiplier();
+        if (upgrade.kind === "click") return baseOutput * global;
+        const ascensionPassive = 1 + state.ascensionOwned.endlessHarvest * 0.5;
+        const royalPassive = 1 + state.royalOwned.crownKettle * 0.15 + state.royalOwned.royalGranary * 0.1;
+        return baseOutput * global * ascensionPassive * royalPassive;
+      }
+
+      function upgradePurchaseDescription(upgrade, quantity) {
+        const owned = state.owned[upgrade.id];
+        const unitLevel = owned + Math.max(1, quantity);
+        const unitOutput = upgrade.rate
+          * upgradeYieldMultiplierAtLevel(unitLevel)
+          * globalMultiplier()
+          * (upgrade.kind === "auto" ? (1 + state.ascensionOwned.endlessHarvest * 0.5)
+            * (1 + state.royalOwned.crownKettle * 0.15 + state.royalOwned.royalGranary * 0.1) : 1);
+        const purchaseOutput = upgradeOutputAtLevel(upgrade, owned + quantity) - upgradeOutputAtLevel(upgrade, owned);
+        const unit = upgrade.kind === "click" ? "beans/click" : "beans/second";
+        return {
+          current: `Each: +${numberFormat.format(unitOutput)} ${unit}`,
+          purchase: `This purchase: +${numberFormat.format(purchaseOutput)} ${unit}`
+        };
+      }
+
       function globalMultiplier() {
-        return 1 + state.royalOwned.royalWarrant * 0.15 + state.royalOwned.beanCharter * 0.05 + state.ascensionOwned.beanAlmanac * 0.25;
+        return 1 + state.royalOwned.royalWarrant * 0.1 + state.royalOwned.beanCharter * 0.05 + state.ascensionOwned.beanAlmanac * 0.25;
       }
 
       function priceIncrease(upgrade) {
-        return Math.max(1, Math.round(upgrade.baseCost * 0.04));
+        return upgrade.baseCost * 0.08;
       }
 
       function priceAtLevel(upgrade, level) {
@@ -611,7 +656,7 @@
 
       function affordablePurchase(upgrade, limit) {
         let low = 0;
-        let high = Math.min(limit, Number.MAX_SAFE_INTEGER - state.owned[upgrade.id]);
+        let high = Math.min(limit, maxUpgradeLevel - state.owned[upgrade.id]);
         while (low < high) {
           const middle = low + Math.ceil((high - low) / 2);
           if (totalPurchaseCost(upgrade, middle) <= state.beans) low = middle;
@@ -635,7 +680,7 @@
             button.className = "upgrade";
             button.type = "button";
             button.innerHTML = `<span class="upgrade-icon" aria-hidden="true">${upgrade.icon}</span>
-              <span><span class="upgrade-name">${upgrade.name}</span><span class="upgrade-desc">${upgrade.description}</span></span>
+              <span><span class="upgrade-name">${upgrade.name}</span><span class="upgrade-desc"><span class="upgrade-yield-current"></span><span class="upgrade-yield-purchase"></span></span></span>
               <span class="upgrade-price"><span class="upgrade-cost"></span><span class="upgrade-level"></span></span>`;
             button.addEventListener("click", () => buy(upgrade));
             elements.shop.append(button);
@@ -651,15 +696,19 @@
           const purchase = unlocked
             ? affordablePurchase(upgrade, requestedQuantity ?? Number.MAX_SAFE_INTEGER)
             : { quantity: 0, totalCost: 0 };
+          const yieldQuantity = selectedPurchaseAmount === "max" ? purchase.quantity : requestedQuantity;
           const canPurchase = selectedPurchaseAmount === "max"
             ? purchase.quantity > 0
             : purchase.quantity >= requestedQuantity;
-          const shownCost = !unlocked
+          const atMaximumLevel = state.owned[upgrade.id] >= maxUpgradeLevel;
+          const shownCost = atMaximumLevel
+            ? "MAX LEVEL"
+            : !unlocked
             ? numberFormat.format(cost)
             : selectedPurchaseAmount === "max"
               ? purchase.quantity > 0
                 ? `Max × ${numberFormat.format(purchase.quantity)} · ${numberFormat.format(purchase.totalCost)}`
-                : `Max · next ${numberFormat.format(cost)}`
+                : state.owned[upgrade.id] >= maxUpgradeLevel ? "MAX LEVEL" : `Max · next ${numberFormat.format(cost)}`
               : `${numberFormat.format(requestedQuantity)}× · ${numberFormat.format(totalPurchaseCost(upgrade, requestedQuantity))}`;
           const button = elements.shop.children[index];
           if (unlocked && !alreadyDiscovered) {
@@ -670,15 +719,25 @@
           button.classList.toggle("is-locked", !unlocked);
           button.classList.toggle("is-affordable", unlocked && !button.disabled);
           button.setAttribute("aria-label", unlocked
-            ? selectedPurchaseAmount === "max" && purchase.quantity === 0
-              ? `${upgrade.name}, no affordable quantity. The next one costs ${numberFormat.format(cost)} beans.`
+            ? atMaximumLevel
+              ? `${upgrade.name}, maximum level ${numberFormat.format(maxUpgradeLevel)} reached.`
+              : selectedPurchaseAmount === "max" && purchase.quantity === 0
+                ? `${upgrade.name}, no affordable quantity. The next one costs ${numberFormat.format(cost)} beans.`
               : `${upgrade.name}, ${selectedPurchaseAmount === "max" ? `buy up to ${numberFormat.format(purchase.quantity)}` : `buy ${numberFormat.format(requestedQuantity)}`}, costs ${numberFormat.format(selectedPurchaseAmount === "max" ? purchase.totalCost : totalPurchaseCost(upgrade, requestedQuantity))} beans${canPurchase ? "" : ", not enough beans"}`
             : `Undiscovered upgrade, costs ${numberFormat.format(cost)} beans. Purchase the previous upgrade and hold enough beans to reveal it.`);
           button.querySelector(".upgrade-icon").textContent = unlocked ? upgrade.icon : "?";
           button.querySelector(".upgrade-name").textContent = unlocked ? upgrade.name : "???";
-          button.querySelector(".upgrade-desc").textContent = unlocked ? upgrade.description : "Undiscovered upgrade";
+          const yieldDescription = unlocked ? upgradePurchaseDescription(upgrade, yieldQuantity) : null;
+          button.querySelector(".upgrade-yield-current").textContent = yieldDescription?.current ?? "Undiscovered upgrade";
+          button.querySelector(".upgrade-yield-purchase").textContent = atMaximumLevel
+            ? `This purchase: maximum level reached (${maxUpgradeYieldMultiplier}× yield)`
+            : yieldDescription?.purchase ?? "";
           button.querySelector(".upgrade-cost").textContent = shownCost;
-          button.querySelector(".upgrade-level").textContent = unlocked ? `Owned: ${state.owned[upgrade.id]}` : "Locked";
+          button.querySelector(".upgrade-level").textContent = unlocked
+            ? state.owned[upgrade.id] >= maxUpgradeLevel
+              ? `Owned: ${numberFormat.format(state.owned[upgrade.id])} / ${numberFormat.format(maxUpgradeLevel)} · MAX`
+              : `Owned: ${numberFormat.format(state.owned[upgrade.id])} / ${numberFormat.format(maxUpgradeLevel)}`
+            : "Locked";
         }
         if (discoveredUpgrade) save();
       }
