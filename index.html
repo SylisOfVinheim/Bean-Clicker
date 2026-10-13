@@ -125,8 +125,14 @@
     .upgrade-icon { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 9px; background: #f0ead9; font-size: 23px; }
     .upgrade-name { display: block; font-size: 16px; font-weight: 700; }
     .upgrade-desc { display: block; margin-top: 3px; color: var(--muted); font: 12px/1.35 Arial, sans-serif; }
-    .upgrade-price { white-space: nowrap; color: var(--green-dark); font-size: 14px; text-align: right; }
+    .upgrade-price { max-width: 170px; color: var(--green-dark); font-size: 14px; text-align: right; overflow-wrap: anywhere; }
     .upgrade-level { display: block; margin-top: 4px; color: var(--muted); font: 11px Arial, sans-serif; }
+    .purchase-amounts { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin: 14px 0 0; }
+    .purchase-amounts-label { margin-right: 3px; color: var(--muted); font: 12px Arial, sans-serif; }
+    .purchase-amount { min-width: 42px; padding: 6px 9px; border: 1px solid var(--line); border-radius: 7px; color: var(--green-dark); background: #fffdf7; font: 700 12px Arial, sans-serif; cursor: pointer; transition: background .15s, border-color .15s, color .15s; }
+    .purchase-amount:hover:not([aria-pressed="true"]) { border-color: var(--green); background: #f5f5e9; }
+    .purchase-amount[aria-pressed="true"] { border-color: var(--green-dark); color: white; background: var(--green-dark); }
+    .purchase-amount:focus-visible { outline-offset: 2px; }
     .tea-break { margin: 17px 0 0; padding: 12px 14px; border-left: 3px solid var(--gold); color: var(--muted); background: #f6f0e2; font-size: 13px; font-style: italic; line-height: 1.45; }
     .rebirth { margin-top: 25px; padding-top: 22px; border-top: 1px solid var(--line); }
     .rebirth-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
@@ -157,7 +163,7 @@
     .custom-option-swatch { width: 32px; height: 32px; border: 1px solid rgba(36,59,46,.2); border-radius: 50%; box-shadow: inset 2px 2px 4px rgba(255,255,255,.45); }
     .custom-option-price { position: absolute; top: -5px; right: -17px; z-index: 1; padding: 2px 4px; border: 1px solid #c5a45f; border-radius: 999px; color: #604817; background: #f6e7bd; font: 700 9px/1 Arial, sans-serif; white-space: nowrap; }
     .custom-option-label { font: 12px Arial, sans-serif; text-align: center; }
-    .currency-note { margin: -8px 0 16px; color: var(--muted); font: 12px Arial, sans-serif; }
+    .currency-note { margin: 12px 0 16px; color: var(--muted); font: 12px Arial, sans-serif; line-height: 1.45; }
     .cosmetic-shop-title { margin: 16px 0 0; font-size: 17px; }
     .ascension-summary { display: flex; justify-content: space-between; gap: 8px; margin: 12px 0; color: var(--green-dark); font-weight: 700; }
     .ascension-copy { margin: 0 0 13px; color: var(--muted); font: 13px/1.5 Arial, sans-serif; }
@@ -178,6 +184,7 @@
     .toast { position: fixed; top: 20px; left: 50%; z-index: 2; padding: 10px 15px; border-radius: 999px; color: white; background: var(--green-dark); opacity: 0; transform: translate(-50%, -8px); transition: opacity .2s, transform .2s; pointer-events: none; }
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
     .footer { margin: 22px 0 0; color: var(--muted); font-size: 12px; text-align: center; }
+    .version { display: block; margin-top: 5px; font: 10px Arial, sans-serif; letter-spacing: .08em; }
 
     @keyframes panel-arrive { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes tab-arrive { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -362,6 +369,14 @@
         </div>
         <section class="tab-panel" id="panel-high-street" role="tabpanel" aria-labelledby="tab-high-street">
           <h3 class="tab-title">The High Street <span class="tab-subtitle">Good things cost beans</span></h3>
+          <div class="purchase-amounts" id="purchase-amounts" role="group" aria-label="Upgrade purchase quantity">
+            <span class="purchase-amounts-label">Buy:</span>
+            <button class="purchase-amount" type="button" data-purchase-amount="1" aria-pressed="true">1×</button>
+            <button class="purchase-amount" type="button" data-purchase-amount="5" aria-pressed="false">5×</button>
+            <button class="purchase-amount" type="button" data-purchase-amount="10" aria-pressed="false">10×</button>
+            <button class="purchase-amount" type="button" data-purchase-amount="100" aria-pressed="false">100×</button>
+            <button class="purchase-amount" type="button" data-purchase-amount="max" aria-pressed="false">Max</button>
+          </div>
           <div class="upgrade-list" id="upgrade-list"></div>
           <p class="tea-break" id="tea-break">“A bean in the hand is worth two in the tin.” — probably someone's nan</p>
         </section>
@@ -402,7 +417,7 @@
         </section>
       </aside>
     </div>
-    <p class="footer">Best enjoyed with a cuppa. Biscuit dunking is entirely at your own risk.</p>
+    <p class="footer">Best enjoyed with a cuppa. Biscuit dunking is entirely at your own risk.<span class="version">Version 3.2.5</span></p>
   </main>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -468,9 +483,9 @@
         { id: "silverThimble", name: "The Silver Thimble", icon: "🧤", description: "+3 beans per click per level", baseCost: 3, kind: "click" }
       ];
       const ascensionUpgrades = [
-        { id: "beanAlmanac", name: "The Eternal Almanac", icon: "📖", description: "+10% to all bean gains per level", baseCost: 2, maxLevel: 10, kind: "all" },
-        { id: "endlessHarvest", name: "Everlasting Harvest", icon: "🌾", description: "+20% passive production per level", baseCost: 2, maxLevel: 10, kind: "passive" },
-        { id: "quickHands", name: "Hands of the Harvester", icon: "✨", description: "+1 bean per click per level", baseCost: 1, maxLevel: 10, kind: "click" }
+        { id: "beanAlmanac", name: "The Eternal Almanac", icon: "📖", description: "+25% to all bean gains per level", baseCost: 2, maxLevel: 10, kind: "all" },
+        { id: "endlessHarvest", name: "Everlasting Harvest", icon: "🌾", description: "+50% passive production per level", baseCost: 2, maxLevel: 10, kind: "passive" },
+        { id: "quickHands", name: "Hands of the Harvester", icon: "✨", description: "+10 beans per click per level", baseCost: 1, maxLevel: 10, kind: "click" }
       ];
       const quotes = [
         "“A bean in the hand is worth two in the tin.” — probably someone's nan",
@@ -497,6 +512,7 @@
       const numberFormat = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 1 });
       const compactNumberFormat = new Intl.NumberFormat("en-GB", { notation: "compact", maximumFractionDigits: 1 });
       const makeOwned = (items) => Object.fromEntries(items.map((item) => [item.id, 0]));
+      let selectedPurchaseAmount = "1";
       const freshState = () => ({
         beans: 0, lifetimeEarned: 0, sealMilestonesEarned: 0, rebirthCount: 0,
         owned: makeOwned(upgrades), unlockedUpgrades: [], royalSeals: 0, royalOwned: makeOwned(royalUpgrades),
@@ -547,6 +563,7 @@
             const owned = saved.owned && saved.owned[upgrade.id];
             state.owned[upgrade.id] = Number.isSafeInteger(owned) && owned >= 0 ? owned : 0;
           }
+          rememberOwnedUpgrades();
           for (const upgrade of royalUpgrades) {
             const owned = saved.royalOwned && saved.royalOwned[upgrade.id];
             state.royalOwned[upgrade.id] = Number.isSafeInteger(owned) && owned >= 0 ? owned : 0;
@@ -558,22 +575,55 @@
 
       function ratePerSecond() {
         const baseRate = upgrades.reduce((sum, upgrade) => sum + (upgrade.kind === "auto" ? state.owned[upgrade.id] * upgrade.rate : 0), 0);
-        const ascensionPassive = 1 + state.ascensionOwned.endlessHarvest * 0.2;
+        const ascensionPassive = 1 + state.ascensionOwned.endlessHarvest * 0.5;
         const royalPassive = 1 + state.royalOwned.crownKettle * 0.25 + state.royalOwned.royalGranary * 0.1;
         return baseRate * globalMultiplier() * ascensionPassive * royalPassive;
       }
 
       function clickPower() {
-        const basePower = 1 + state.owned.spoon + state.royalOwned.goldenSpoon * 2 + state.royalOwned.silverThimble * 3 + state.ascensionOwned.quickHands;
+        const basePower = 1 + state.owned.spoon + state.royalOwned.goldenSpoon * 2 + state.royalOwned.silverThimble * 3 + state.ascensionOwned.quickHands * 10;
         return basePower * globalMultiplier();
       }
 
       function globalMultiplier() {
-        return 1 + state.royalOwned.royalWarrant * 0.15 + state.royalOwned.beanCharter * 0.05 + state.ascensionOwned.beanAlmanac * 0.1;
+        return 1 + state.royalOwned.royalWarrant * 0.15 + state.royalOwned.beanCharter * 0.05 + state.ascensionOwned.beanAlmanac * 0.25;
+      }
+
+      function priceIncrease(upgrade) {
+        return Math.max(1, Math.round(upgrade.baseCost * 0.04));
+      }
+
+      function priceAtLevel(upgrade, level) {
+        return upgrade.baseCost + priceIncrease(upgrade) * level;
       }
 
       function price(upgrade) {
-        return Math.floor(upgrade.baseCost * Math.pow(1.22, state.owned[upgrade.id]));
+        return priceAtLevel(upgrade, state.owned[upgrade.id]);
+      }
+
+      function rememberOwnedUpgrades() {
+        const discovered = new Set(state.unlockedUpgrades);
+        for (const upgrade of upgrades) {
+          if (state.owned[upgrade.id] > 0) discovered.add(upgrade.id);
+        }
+        state.unlockedUpgrades = [...discovered];
+      }
+
+      function affordablePurchase(upgrade, limit) {
+        let low = 0;
+        let high = Math.min(limit, Number.MAX_SAFE_INTEGER - state.owned[upgrade.id]);
+        while (low < high) {
+          const middle = low + Math.ceil((high - low) / 2);
+          if (totalPurchaseCost(upgrade, middle) <= state.beans) low = middle;
+          else high = middle - 1;
+        }
+        return { quantity: low, totalCost: totalPurchaseCost(upgrade, low) };
+      }
+
+      function totalPurchaseCost(upgrade, quantity) {
+        const level = state.owned[upgrade.id];
+        return quantity * upgrade.baseCost
+          + priceIncrease(upgrade) * (quantity * level + quantity * (quantity - 1) / 2);
       }
 
       function renderShop() {
@@ -597,21 +647,37 @@
           const previousPurchased = index === 0 || state.owned[upgrades[index - 1].id] > 0;
           const alreadyDiscovered = state.unlockedUpgrades.includes(upgrade.id) || state.owned[upgrade.id] > 0;
           const unlocked = alreadyDiscovered || (previousPurchased && state.beans >= cost);
+          const requestedQuantity = selectedPurchaseAmount === "max" ? null : Number(selectedPurchaseAmount);
+          const purchase = unlocked
+            ? affordablePurchase(upgrade, requestedQuantity ?? Number.MAX_SAFE_INTEGER)
+            : { quantity: 0, totalCost: 0 };
+          const canPurchase = selectedPurchaseAmount === "max"
+            ? purchase.quantity > 0
+            : purchase.quantity >= requestedQuantity;
+          const shownCost = !unlocked
+            ? numberFormat.format(cost)
+            : selectedPurchaseAmount === "max"
+              ? purchase.quantity > 0
+                ? `Max × ${numberFormat.format(purchase.quantity)} · ${numberFormat.format(purchase.totalCost)}`
+                : `Max · next ${numberFormat.format(cost)}`
+              : `${numberFormat.format(requestedQuantity)}× · ${numberFormat.format(totalPurchaseCost(upgrade, requestedQuantity))}`;
           const button = elements.shop.children[index];
           if (unlocked && !alreadyDiscovered) {
             state.unlockedUpgrades.push(upgrade.id);
             discoveredUpgrade = true;
           }
-          button.disabled = !unlocked || state.beans < cost;
+          button.disabled = !unlocked || !canPurchase;
           button.classList.toggle("is-locked", !unlocked);
           button.classList.toggle("is-affordable", unlocked && !button.disabled);
           button.setAttribute("aria-label", unlocked
-            ? `${upgrade.name}, costs ${numberFormat.format(cost)} beans`
+            ? selectedPurchaseAmount === "max" && purchase.quantity === 0
+              ? `${upgrade.name}, no affordable quantity. The next one costs ${numberFormat.format(cost)} beans.`
+              : `${upgrade.name}, ${selectedPurchaseAmount === "max" ? `buy up to ${numberFormat.format(purchase.quantity)}` : `buy ${numberFormat.format(requestedQuantity)}`}, costs ${numberFormat.format(selectedPurchaseAmount === "max" ? purchase.totalCost : totalPurchaseCost(upgrade, requestedQuantity))} beans${canPurchase ? "" : ", not enough beans"}`
             : `Undiscovered upgrade, costs ${numberFormat.format(cost)} beans. Purchase the previous upgrade and hold enough beans to reveal it.`);
           button.querySelector(".upgrade-icon").textContent = unlocked ? upgrade.icon : "?";
           button.querySelector(".upgrade-name").textContent = unlocked ? upgrade.name : "???";
           button.querySelector(".upgrade-desc").textContent = unlocked ? upgrade.description : "Undiscovered upgrade";
-          button.querySelector(".upgrade-cost").textContent = numberFormat.format(cost);
+          button.querySelector(".upgrade-cost").textContent = shownCost;
           button.querySelector(".upgrade-level").textContent = unlocked ? `Owned: ${state.owned[upgrade.id]}` : "Locked";
         }
         if (discoveredUpgrade) save();
@@ -850,12 +916,14 @@
       }
 
       function buy(upgrade) {
-        const cost = price(upgrade);
-        if (state.beans < cost) return;
-        state.beans -= cost;
-        state.owned[upgrade.id] += 1;
+        const requestedQuantity = selectedPurchaseAmount === "max" ? Number.MAX_SAFE_INTEGER : Number(selectedPurchaseAmount);
+        const purchase = affordablePurchase(upgrade, requestedQuantity);
+        if (purchase.quantity === 0 || (selectedPurchaseAmount !== "max" && purchase.quantity < requestedQuantity)) return;
+        state.beans -= purchase.totalCost;
+        state.owned[upgrade.id] += purchase.quantity;
+        rememberOwnedUpgrades();
         elements.quote.textContent = quotes[Math.floor(Math.random() * quotes.length)];
-        showToast(`${upgrade.name}. A splendid purchase.`);
+        showToast(`${upgrade.name} × ${numberFormat.format(purchase.quantity)}. A splendid purchase.`);
         render();
         save();
       }
@@ -877,6 +945,7 @@
         if (reward < 1) return;
         state.royalSeals += reward;
         state.sealMilestonesEarned = milestones;
+        rememberOwnedUpgrades();
         state.beans = 0;
         state.owned = makeOwned(upgrades);
         state.rebirthCount += reward;
@@ -979,6 +1048,16 @@
           selectTab(shopTabs[nextIndex]);
         });
       }
+
+      document.getElementById("purchase-amounts").addEventListener("click", (event) => {
+        const button = event.target.closest("[data-purchase-amount]");
+        if (!button) return;
+        selectedPurchaseAmount = button.dataset.purchaseAmount;
+        for (const option of document.querySelectorAll("[data-purchase-amount]")) {
+          option.setAttribute("aria-pressed", String(option === button));
+        }
+        renderShop();
+      });
 
       document.getElementById("bean-colours").addEventListener("click", (event) => {
         const button = event.target.closest("[data-bean-color]");
