@@ -41,6 +41,11 @@
     .brand-name { margin: 0; font-size: 14px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
     .brand-sub { margin: 3px 0 0; color: var(--muted); font-size: 12px; letter-spacing: .04em; }
     .save-note { color: var(--muted); font: 12px Arial, sans-serif; }
+    .progress-ribbon { position: sticky; top: 0; z-index: 5; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 12px 0 0; padding: 9px; border: 1px solid rgba(216,204,181,.9); border-radius: 13px; background: rgba(255,250,240,.94); box-shadow: 0 5px 16px rgba(69,55,31,.09); backdrop-filter: blur(12px); }
+    .progress-item { min-width: 0; padding: 5px 10px; border-left: 1px solid var(--line); }
+    .progress-item:first-child { border-left: 0; }
+    .progress-label { display: block; overflow: hidden; color: var(--muted); font: 10px Arial, sans-serif; letter-spacing: .09em; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
+    .progress-value { display: block; overflow: hidden; margin-top: 3px; font-size: clamp(13px, 1.5vw, 17px); font-variant-numeric: tabular-nums; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
 
     .masthead { margin: 24px 0 22px; text-align: center; }
     .eyebrow { margin: 0 0 9px; color: var(--red); font-size: 12px; font-weight: bold; letter-spacing: .2em; text-transform: uppercase; }
@@ -49,9 +54,9 @@
 
     .game { display: grid; grid-template-columns: minmax(320px, .82fr) minmax(0, 1.18fr); gap: 20px; align-items: start; }
     .panel { border: 1px solid var(--line); border-radius: 15px; background: rgba(255,250,240,.86); box-shadow: 0 10px 30px rgba(69,55,31,.07); }
-    .counter-panel { position: sticky; top: 16px; display: flex; min-height: min(650px, calc(100vh - 150px)); flex-direction: column; align-items: center; justify-content: center; padding: 30px 22px; overflow: hidden; animation: panel-arrive .55s both; }
+    .counter-panel { position: sticky; top: 16px; display: flex; min-width: 0; min-height: min(650px, calc(100vh - 150px)); flex-direction: column; align-items: center; justify-content: center; padding: 30px 22px; overflow: hidden; animation: panel-arrive .55s both; }
     .counter-label { margin: 0; color: var(--muted); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; }
-    .bean-count { margin: 8px 0 0; font-size: clamp(46px, 8vw, 76px); font-variant-numeric: tabular-nums; line-height: 1; }
+    .bean-count { width: 100%; min-width: 0; max-width: 100%; margin: 8px 0 0; overflow: hidden; font-size: clamp(24px, 5vw, 58px); font-variant-numeric: tabular-nums; line-height: 1.05; text-align: center; white-space: nowrap; }
     .bean-unit { margin: 5px 0 19px; color: var(--green); font-size: 18px; font-style: italic; }
     .bean-button {
       position: relative;
@@ -80,18 +85,21 @@
     .stat strong { display: block; font-size: 19px; font-weight: 500; }
     .stat span { color: var(--muted); font: 11px Arial, sans-serif; letter-spacing: .04em; }
 
-    .shop { min-width: 0; padding: 22px; animation: panel-arrive .65s .08s both; }
-    .shop-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding-bottom: 17px; border-bottom: 1px solid var(--line); }
-    .shop-heading h2 { margin: 0; font-size: 26px; font-weight: 500; }
-    .shop-heading span { color: var(--muted); font: 12px Arial, sans-serif; }
-    .shop-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 17px 0 0; padding: 5px; border-radius: 11px; background: #eee5d2; }
-    .shop-tab { padding: 10px 12px; border: 0; border-radius: 8px; color: var(--muted); background: transparent; cursor: pointer; transition: color .2s, background .2s, box-shadow .2s, transform .2s; }
-    .shop-tab[aria-selected="true"] { color: var(--green-dark); background: var(--cream); box-shadow: 0 2px 8px rgba(69,55,31,.12); }
-    .shop-tab:hover { transform: translateY(-1px); }
-    .tab-panel { padding-top: 18px; animation: tab-arrive .28s ease-out; }
-    .tab-title { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 0 0 6px; font-size: 22px; font-weight: 500; }
+    .shop { min-width: 0; padding: 24px; animation: panel-arrive .65s .08s both; }
+    .shop-heading { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 12px; margin: -2px 0 0; padding: 0 0 17px; border-bottom: 1px solid var(--line); }
+    .shop-heading h2 { grid-column: 2; margin: 0; font-size: clamp(22px, 2vw, 27px); font-weight: 500; letter-spacing: -.025em; text-align: center; }
+    .shop-heading .shop-tab { grid-column: 3; justify-self: end; min-height: 38px; padding: 8px 14px; border: 1px solid #b8c4a9; color: var(--green-dark); background: #f6f5e9; font-size: 13px; font-weight: 700; box-shadow: 0 2px 5px rgba(69,55,31,.06); }
+    .shop-heading .shop-tab:hover { border-color: var(--green); background: #eef1e3; }
+    .shop-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; margin: 15px 0 0; padding: 6px; border: 1px solid #e0d7c4; border-radius: 13px; background: linear-gradient(135deg, #f1eadb, #ebe3d1); box-shadow: inset 0 1px 2px rgba(69,55,31,.05); }
+    .shop-tab { position: relative; min-width: 0; min-height: 43px; padding: 9px 7px; border: 1px solid transparent; border-radius: 9px; color: #596356; background: transparent; font-size: clamp(11px, 1.2vw, 14px); font-weight: 600; line-height: 1.2; cursor: pointer; transition: color .2s, background .2s, border-color .2s, box-shadow .2s, transform .2s; }
+    .shop-tab[aria-selected="true"] { border-color: #315c42; color: white; background: linear-gradient(135deg, #3d704f, #28533a); box-shadow: 0 3px 8px rgba(35,70,50,.22); }
+    .shop-tab:hover:not([aria-selected="true"]) { border-color: #c8bea9; color: var(--green-dark); background: rgba(255,250,240,.65); transform: translateY(-1px); }
+    .shop-tab:active { transform: translateY(0); }
+    .shop-tab:focus-visible { outline-offset: 2px; }
+    .tab-panel { padding-top: 20px; animation: tab-arrive .28s ease-out; }
+    .tab-title { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 0 0 8px; font-size: 23px; font-weight: 500; }
     .tab-subtitle { margin: 0; color: var(--muted); font: 12px Arial, sans-serif; }
-    .upgrade-list { display: grid; gap: 11px; margin-top: 16px; }
+    .upgrade-list { display: grid; gap: 10px; margin-top: 15px; }
     .upgrade-list, .special-list { max-height: min(430px, 52vh); overflow-y: auto; overscroll-behavior: contain; padding: 2px 5px 4px 1px; scrollbar-color: #c9b995 transparent; scrollbar-width: thin; }
     .upgrade {
       display: grid;
@@ -106,10 +114,14 @@
       background: #fffdf7;
       text-align: left;
       cursor: pointer;
-      transition: border-color .15s, background .15s, transform .15s;
+      transition: border-color .2s, background .2s, transform .15s, opacity .2s, filter .2s, box-shadow .25s;
     }
     .upgrade:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--green); background: #f5f5e9; }
-    .upgrade:disabled { cursor: not-allowed; opacity: .56; }
+    .upgrade:disabled:not(.is-affordable) { cursor: not-allowed; opacity: .72; filter: grayscale(.3); }
+    .upgrade.is-affordable { border-color: #729464; background: linear-gradient(110deg, #f6f8ed, #fffdf7 62%); box-shadow: inset 4px 0 0 #6f985f, 0 0 0 1px rgba(111,152,95,.15), 0 4px 12px rgba(89,132,75,.15); }
+    .upgrade.is-affordable .upgrade-icon { position: relative; color: white; background: linear-gradient(145deg, #659258, #315c42); box-shadow: 0 2px 8px rgba(35,70,50,.28); }
+    .upgrade.is-affordable .upgrade-icon::after { position: absolute; right: -5px; bottom: -5px; display: grid; width: 17px; height: 17px; place-items: center; border: 2px solid #fffdf7; border-radius: 50%; color: #fff; background: #bd8b2e; content: "✓"; font: 700 10px/1 Arial, sans-serif; }
+    .upgrade.is-locked { opacity: .48; filter: grayscale(1); }
     .upgrade-icon { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 9px; background: #f0ead9; font-size: 23px; }
     .upgrade-name { display: block; font-size: 16px; font-weight: 700; }
     .upgrade-desc { display: block; margin-top: 3px; color: var(--muted); font: 12px/1.35 Arial, sans-serif; }
@@ -130,6 +142,30 @@
     .special-list { display: grid; gap: 10px; margin-top: 15px; }
     .special-list .upgrade-icon { background: #f3ead3; }
     .special-list .upgrade-price { color: #8a6724; }
+    .customization-copy { margin: 0 0 18px; color: var(--muted); font: 13px/1.5 Arial, sans-serif; }
+    .customization-group { margin: 0; padding: 0; border: 0; }
+    .customization-group + .customization-group { margin-top: 22px; }
+    .customization-group legend { margin-bottom: 10px; font-size: 17px; font-weight: 700; }
+    .customization-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
+    .custom-option { position: relative; display: grid; min-width: 0; min-height: 82px; align-content: center; justify-items: center; gap: 6px; padding: 10px 6px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); background: #fffdf7; cursor: pointer; transition: border-color .2s, background .2s, box-shadow .2s, transform .15s, filter .2s, opacity .2s; }
+    .custom-option:hover { transform: translateY(-1px); border-color: var(--green); }
+    .custom-option[aria-pressed="true"] { border-color: var(--green); background: #f5f5e9; box-shadow: 0 0 12px rgba(89,132,75,.2); }
+    .custom-option:disabled { cursor: not-allowed; }
+    .custom-option.is-locked { border-color: #d5ccbb; background: #f4f0e7; }
+    .custom-option-art { position: relative; display: grid; width: 36px; height: 36px; place-items: center; border-radius: 50%; font-size: 25px; line-height: 1; }
+    .custom-option.is-locked .custom-option-art > :first-child { filter: grayscale(1); opacity: .58; }
+    .custom-option-swatch { width: 32px; height: 32px; border: 1px solid rgba(36,59,46,.2); border-radius: 50%; box-shadow: inset 2px 2px 4px rgba(255,255,255,.45); }
+    .custom-option-price { position: absolute; top: -5px; right: -17px; z-index: 1; padding: 2px 4px; border: 1px solid #c5a45f; border-radius: 999px; color: #604817; background: #f6e7bd; font: 700 9px/1 Arial, sans-serif; white-space: nowrap; }
+    .custom-option-label { font: 12px Arial, sans-serif; text-align: center; }
+    .currency-note { margin: -8px 0 16px; color: var(--muted); font: 12px Arial, sans-serif; }
+    .cosmetic-shop-title { margin: 16px 0 0; font-size: 17px; }
+    .ascension-summary { display: flex; justify-content: space-between; gap: 8px; margin: 12px 0; color: var(--green-dark); font-weight: 700; }
+    .ascension-copy { margin: 0 0 13px; color: var(--muted); font: 13px/1.5 Arial, sans-serif; }
+    .ascension-tree { display: grid; gap: 10px; margin-top: 15px; }
+    .ascend-button { width: 100%; margin-top: 12px; padding: 12px 14px; border: 1px solid var(--green-dark); border-radius: 9px; color: white; background: var(--green); cursor: pointer; transition: background .15s, opacity .15s; }
+    .ascend-button:hover:not(:disabled) { background: var(--green-dark); }
+    .ascend-button:disabled { cursor: not-allowed; opacity: .48; }
+    .ascend-button:not(:disabled) { border-color: #d4a94f; box-shadow: 0 0 0 2px rgba(212,169,79,.28), 0 0 18px rgba(212,169,79,.42); animation: ascend-halo 2.4s ease-in-out infinite; }
     .upgrade { animation: upgrade-arrive .35s both; }
     .upgrade:nth-child(2) { animation-delay: 35ms; }
     .upgrade:nth-child(3) { animation-delay: 70ms; }
@@ -150,6 +186,7 @@
     @keyframes bean-tap { 0% { transform: scale(1); } 45% { transform: scale(.92) rotate(5deg); } 100% { transform: scale(1); } }
     @keyframes bean-spin { 0% { transform: rotate(0) scale(1); } 55% { transform: rotate(18deg) scale(.86); } 100% { transform: rotate(0) scale(1); } }
     @keyframes bean-pop { 0% { opacity: 0; transform: translate(-50%, 5px) scale(.8); } 15% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -55px) scale(1.12); } }
+    @keyframes ascend-halo { 0%, 100% { box-shadow: 0 0 0 2px rgba(212,169,79,.24), 0 0 13px rgba(212,169,79,.34); } 50% { box-shadow: 0 0 0 3px rgba(212,169,79,.38), 0 0 23px rgba(212,169,79,.55); } }
 
     @media (max-width: 760px) {
       .page { width: min(560px, calc(100% - 24px)); padding-top: 16px; }
@@ -160,11 +197,21 @@
       .shop { padding: 20px; }
       .save-note { font-size: 11px; }
     }
+    @media (max-width: 520px) {
+      .progress-ribbon { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 6px; }
+      .progress-item { padding: 4px 8px; }
+      .progress-item:nth-child(3) { border-left: 0; }
+      .progress-label { font-size: 9px; }
+      .progress-value { font-size: 14px; }
+    }
     @media (max-width: 420px) {
       .brand-name { font-size: 12px; }
       .brand-sub { font-size: 10px; }
       .shop { padding: 16px; }
-      .shop-heading span { font-size: 10px; }
+      .shop-heading h2 { font-size: 21px; }
+      .shop-heading .shop-tab { padding: 8px 9px; font-size: 12px; }
+      .shop-tabs { gap: 5px; padding: 5px; }
+      .shop-tab { min-height: 40px; padding: 8px 4px; }
       .upgrade { grid-template-columns: 40px minmax(0, 1fr) auto; gap: 8px; padding: 11px 9px; }
       .upgrade-icon { width: 38px; height: 38px; font-size: 20px; }
       .upgrade-name { font-size: 14px; }
@@ -184,42 +231,115 @@
       <div class="brand">
         <div class="brand-mark" aria-hidden="true">🫘</div>
         <div>
-          <p class="brand-name">The Bean Counter</p>
+            <p class="brand-name">Bean There, Done That</p>
           <p class="brand-sub">Established this very afternoon</p>
         </div>
       </div>
       <div class="save-note" id="save-note" aria-live="polite">Progress saved automatically</div>
     </header>
 
-    <section class="masthead" aria-labelledby="game-title">
-      <p class="eyebrow">A most proper idle game</p>
-      <h1 id="game-title">Bean there,<br>done that.</h1>
-      <p class="intro">Put the kettle on. There are beans to be had.</p>
+    <section class="progress-ribbon" aria-label="Your current progress">
+      <div class="progress-item"><span class="progress-label">Beans</span><span class="progress-value" id="progress-beans">0</span></div>
+      <div class="progress-item"><span class="progress-label">Rebirths this run</span><span class="progress-value" id="progress-rebirths">0</span></div>
+      <div class="progress-item"><span class="progress-label">Ascensions</span><span class="progress-value" id="progress-ascensions">0</span></div>
+      <div class="progress-item"><span class="progress-label">Pounds</span><span class="progress-value" id="progress-pounds">£0</span></div>
     </section>
 
     <div class="game">
       <section class="panel counter-panel" aria-label="Bean counter">
         <p class="counter-label">Your very respectable collection</p>
         <p class="bean-count" id="bean-count" aria-live="polite">0</p>
-        <p class="bean-unit">beans, old bean</p>
+        <p class="bean-unit">beans</p>
         <button class="bean-button" id="bean-button" type="button" aria-label="Click to collect beans">
           <svg class="bean-art" viewBox="0 0 220 220" role="img" aria-label="A shiny baked bean">
             <defs>
               <linearGradient id="beanPaint" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#c75b35"/>
-                <stop offset=".48" stop-color="#96391f"/>
-                <stop offset="1" stop-color="#612818"/>
+                <stop offset="0" stop-color="var(--bean-light)"/>
+                <stop offset=".48" stop-color="var(--bean-middle)"/>
+                <stop offset="1" stop-color="var(--bean-dark)"/>
               </linearGradient>
               <radialGradient id="beanShine" cx=".36" cy=".2" r=".75">
-                <stop offset="0" stop-color="#f7a06b" stop-opacity=".9"/>
-                <stop offset=".55" stop-color="#d56a3b" stop-opacity=".15"/>
+                <stop offset="0" stop-color="var(--bean-shine)" stop-opacity=".9"/>
+                <stop offset=".55" stop-color="var(--bean-middle)" stop-opacity=".15"/>
                 <stop offset="1" stop-color="#541f12" stop-opacity=".2"/>
               </radialGradient>
             </defs>
-            <path d="M39 113C31 80 52 45 91 31c31-11 71-1 88 24 17 26 10 59-10 89-19 29-49 52-82 46-29-5-43-38-48-77Z" fill="url(#beanPaint)" stroke="#6f2c19" stroke-width="4"/>
+            <path d="M39 113C31 80 52 45 91 31c31-11 71-1 88 24 17 26 10 59-10 89-19 29-49 52-82 46-29-5-43-38-48-77Z" fill="url(#beanPaint)" stroke="var(--bean-outline)" stroke-width="4"/>
             <path d="M39 113C31 80 52 45 91 31c31-11 71-1 88 24 17 26 10 59-10 89-19 29-49 52-82 46-29-5-43-38-48-77Z" fill="url(#beanShine)"/>
-            <path d="M62 70c9-15 24-25 42-29" fill="none" stroke="#ffcca0" stroke-linecap="round" stroke-width="9" opacity=".55"/>
+            <path d="M62 70c9-15 24-25 42-29" fill="none" stroke="var(--bean-shine)" stroke-linecap="round" stroke-width="9" opacity=".55"/>
             <ellipse cx="120" cy="123" rx="29" ry="12" fill="#581f13" opacity=".24" transform="rotate(-31 120 123)"/>
+            <g data-bean-costume="crown" style="display:none" stroke="#80551d" stroke-linejoin="round" stroke-width="2.5">
+              <path d="m91 43 5-26 17 17 10-25 12 25 17-16 4 28Z" fill="#f0c34f"/>
+              <path d="M93 42h61v10H93z" fill="#d89a35"/>
+              <circle cx="97" cy="46" r="2.5" fill="#fff0a8" stroke="none"/>
+              <circle cx="150" cy="46" r="2.5" fill="#fff0a8" stroke="none"/>
+            </g>
+            <g data-bean-costume="bowler" style="display:none" stroke="#33271f" stroke-linejoin="round" stroke-width="3">
+              <path d="M76 47c2-6 13-10 34-10s32 4 34 10c-1 5-13 8-34 8s-33-3-34-8Z" fill="#41362f"/>
+              <path d="M86 44c1-17 10-26 24-26s23 9 24 26Z" fill="#57483d"/>
+              <path d="M87 39c7 4 35 4 46 0v8H87Z" fill="#a34035" stroke="none"/>
+              <path d="M82 48c10 5 42 5 56 0" fill="none" stroke="#786354" stroke-width="2"/>
+            </g>
+            <g data-bean-costume="spectacles" style="display:none" fill="rgba(255,248,220,.18)" stroke="#3b3028" stroke-linecap="round" stroke-width="4">
+              <circle cx="91" cy="87" r="15"/>
+              <circle cx="131" cy="87" r="15"/>
+              <path d="M106 87c4-4 11-4 15 0M76 84l-7-4m78 4 7-4" fill="none"/>
+              <path d="M84 81l5-3m37 3 5-3" fill="none" stroke="#fff1c9" stroke-width="2"/>
+            </g>
+            <g data-bean-costume="monocle" style="display:none" fill="rgba(255,248,220,.14)" stroke="#c89943" stroke-linecap="round" stroke-width="4">
+              <circle cx="126" cy="87" r="19"/>
+              <path d="M141 102c7 8 6 17 2 23m-17-57c7-6 14-7 20-3" fill="none" stroke-width="3"/>
+              <circle cx="126" cy="87" r="14" fill="none" stroke="#fff0bd" stroke-width="1.5"/>
+            </g>
+            <g data-bean-costume="scarf" style="display:none" stroke="#752e2b" stroke-linejoin="round" stroke-width="2.5">
+              <path d="M50 113c24 17 65 21 119-7l-2 15c-48 29-94 27-122 5Z" fill="#a94039"/>
+              <path d="M52 118c28 17 70 18 112-5" fill="none" stroke="#f0c16b" stroke-width="4"/>
+              <path d="M56 125c28 17 70 18 109-4" fill="none" stroke="#c95448" stroke-width="7"/>
+              <path d="m64 132 4 25 14-16-4-9Z" fill="#bd5145"/>
+              <path d="m69 137 2 12 7-8" fill="none" stroke="#f0c16b" stroke-width="3"/>
+            </g>
+            <g data-bean-costume="flower" style="display:none" stroke="#8a3f35" stroke-width="2">
+              <path d="M147 69c-8 8-11 16-8 23" fill="none" stroke="#315c42" stroke-width="3"/>
+              <ellipse cx="136" cy="87" rx="6" ry="3" fill="#75a55d" stroke="none" transform="rotate(25 136 87)"/>
+              <g fill="#fff4d2">
+                <ellipse cx="146" cy="64" rx="4" ry="8"/>
+                <ellipse cx="146" cy="64" rx="4" ry="8" transform="rotate(72 146 64)"/>
+                <ellipse cx="146" cy="64" rx="4" ry="8" transform="rotate(144 146 64)"/>
+                <ellipse cx="146" cy="64" rx="4" ry="8" transform="rotate(216 146 64)"/>
+                <ellipse cx="146" cy="64" rx="4" ry="8" transform="rotate(288 146 64)"/>
+              </g>
+              <circle cx="146" cy="64" r="4" fill="#d4a94f"/>
+            </g>
+            <g data-bean-costume="moustache" style="display:none" fill="#392820" stroke="#241a16" stroke-linejoin="round" stroke-width="2">
+              <path d="M110 111c-8-8-15-11-23-10-8 1-13 7-9 13 3 5 10 5 15 1-1 6-7 9-13 8 7 7 18 3 24-5 2-2 4-4 6-5 2 1 4 3 6 5 6 8 17 12 24 5-6 1-12-2-13-8 5 4 12 4 15-1 4-6-1-12-9-13-8-1-15 2-23 10Z"/>
+              <path d="M84 108c4-2 8-2 12 0m33 0c4-2 8-2 12 0" fill="none" stroke="#80634a" stroke-width="2"/>
+            </g>
+            <g data-bean-costume="bikini" style="display:none" stroke="#171313" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+              <defs>
+                <clipPath id="bikiniTopClip">
+                  <path d="M68 95c2-10 10-17 20-17 9 0 15 7 22 17-5 11-12 17-22 17-11 0-18-7-20-17Zm42 0c7-10 13-17 22-17 10 0 18 7 20 17-2 10-9 17-20 17-10 0-17-6-22-17Z"/>
+                </clipPath>
+                <clipPath id="bikiniBottomClip">
+                  <path d="M72 137c19-7 57-7 76 0l-8 17c-12-5-18-9-30-9s-18 4-30 9Z"/>
+                </clipPath>
+              </defs>
+              <path d="M76 88 62 76m82 12 14-12" fill="none" stroke-width="4"/>
+              <path d="M68 95c2-10 10-17 20-17 9 0 15 7 22 17-5 11-12 17-22 17-11 0-18-7-20-17Zm42 0c7-10 13-17 22-17 10 0 18 7 20 17-2 10-9 17-20 17-10 0-17-6-22-17Z" fill="#f05c9c"/>
+              <g clip-path="url(#bikiniTopClip)" fill="#ffe45c" stroke="none">
+                <circle cx="76" cy="88" r="3.2"/><circle cx="89" cy="84" r="3.2"/><circle cx="99" cy="94" r="3.2"/>
+                <circle cx="79" cy="101" r="3.2"/><circle cx="91" cy="107" r="3.2"/><circle cx="104" cy="103" r="3.2"/>
+                <circle cx="119" cy="94" r="3.2"/><circle cx="130" cy="84" r="3.2"/><circle cx="143" cy="88" r="3.2"/>
+                <circle cx="115" cy="103" r="3.2"/><circle cx="128" cy="107" r="3.2"/><circle cx="141" cy="101" r="3.2"/>
+              </g>
+              <path d="M109 94c-2 2-2 5 1 7 3-2 3-5 1-7l-1-1Z" fill="#ffe45c" stroke-width="2"/>
+              <path d="M72 137c19-7 57-7 76 0l-8 17c-12-5-18-9-30-9s-18 4-30 9Z" fill="#f05c9c"/>
+              <g clip-path="url(#bikiniBottomClip)" fill="#ffe45c" stroke="none">
+                <circle cx="83" cy="140" r="3.2"/><circle cx="96" cy="137" r="3.2"/><circle cx="108" cy="142" r="3.2"/>
+                <circle cx="121" cy="137" r="3.2"/><circle cx="135" cy="140" r="3.2"/><circle cx="91" cy="150" r="3.2"/>
+                <circle cx="105" cy="148" r="3.2"/><circle cx="119" cy="148" r="3.2"/><circle cx="132" cy="150" r="3.2"/>
+              </g>
+              <path d="m72 137-12-8m88 8 12-8m-100 4 12 4m88-4-12 4" fill="none" stroke-width="3"/>
+            </g>
           </svg>
         </button>
         <p class="tap-hint">Give the bean a little tap, if you please.</p>
@@ -231,13 +351,14 @@
       </section>
 
       <aside class="panel shop" aria-labelledby="shop-title">
-        <div class="shop-heading">
-          <h2 id="shop-title">The Bean Emporium</h2>
-          <span>Provisions &amp; royal favours</span>
-        </div>
         <div class="shop-tabs" role="tablist" aria-label="Shop sections">
+          <div class="shop-heading" role="group">
+            <h2 id="shop-title">Upgrades</h2>
+            <button class="shop-tab" id="tab-bean-style" type="button" role="tab" aria-selected="false" aria-controls="panel-bean-style" tabindex="-1">Bean Style</button>
+          </div>
           <button class="shop-tab" id="tab-high-street" type="button" role="tab" aria-selected="true" aria-controls="panel-high-street" tabindex="0">High Street</button>
           <button class="shop-tab" id="tab-rebirth" type="button" role="tab" aria-selected="false" aria-controls="panel-rebirth" tabindex="-1">Royal Rebirth <span id="tab-seal-count">0</span></button>
+          <button class="shop-tab" id="tab-ascension" type="button" role="tab" aria-selected="false" aria-controls="panel-ascension" tabindex="-1">Ascension</button>
         </div>
         <section class="tab-panel" id="panel-high-street" role="tabpanel" aria-labelledby="tab-high-street">
           <h3 class="tab-title">The High Street <span class="tab-subtitle">Good things cost beans</span></h3>
@@ -249,11 +370,35 @@
             <h3 class="tab-title" id="rebirth-title">A Royal Rebirth</h3>
             <span class="seal-count" id="seal-count">👑 0 royal seals</span>
           </div>
-          <p class="rebirth-copy">Start afresh with the Crown's blessing. Your beans and High Street upgrades will be reset; lifetime beans and royal upgrades remain. Earn a royal seal for every new 10,000 lifetime beans.</p>
+          <p class="rebirth-copy">Start afresh with the Crown's blessing. Your beans and High Street upgrades reset, while lifetime beans and royal upgrades remain. Earn a royal seal for each new 10,000 lifetime beans; each rebirth claims your unclaimed seals.</p>
           <div class="rebirth-progress" role="progressbar" aria-label="Progress towards next royal seal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="rebirth-progress"></span></div>
           <p class="rebirth-status" id="rebirth-status">Earn 10,000 lifetime beans to qualify.</p>
           <button class="rebirth-button" id="rebirth-button" type="button" disabled>Not quite time for a royal occasion</button>
           <div class="special-list" id="special-list" aria-label="Royal upgrades"></div>
+        </section>
+        <section class="tab-panel" id="panel-bean-style" role="tabpanel" aria-labelledby="tab-bean-style" hidden>
+          <h3 class="tab-title">A Bean of One's Own</h3>
+          <p class="customization-copy">Choose a coat and a little finishing touch for your bean. Your choices are saved automatically.</p>
+          <fieldset class="customization-group">
+            <legend>Bean colour</legend>
+            <div class="customization-options" id="bean-colours">
+            </div>
+          </fieldset>
+          <fieldset class="customization-group">
+            <legend>Decoration</legend>
+            <div class="customization-options" id="bean-decorations">
+            </div>
+          </fieldset>
+          <p class="currency-note"><span id="pound-note-count">0 × £5 notes (£0 total)</span> · each new look costs £5</p>
+        </section>
+        <section class="tab-panel" id="panel-ascension" role="tabpanel" aria-labelledby="tab-ascension" hidden>
+          <h3 class="tab-title">Beyond the Crown</h3>
+          <p class="ascension-copy">Ascend after 100 rebirths to restart the entire bean journey. Beans, lifetime earnings, upgrades, royal seals, and rebirths reset; Ascension Points, tree upgrades, cosmetics, and pound notes endure.</p>
+          <div class="ascension-summary"><span id="ascension-point-count">✦ 0 points</span><span id="ascension-total-count">Ascensions: 0</span></div>
+          <p class="rebirth-status" id="ascension-status">100 rebirths needed. Rebirths this run: 0.</p>
+          <button class="ascend-button" id="ascend-button" type="button" disabled>Ascend after 100 rebirths</button>
+          <h4 class="cosmetic-shop-title">Ascension tree</h4>
+          <div class="ascension-tree" id="ascension-tree" aria-label="Ascension upgrades"></div>
         </section>
       </aside>
     </div>
@@ -264,19 +409,68 @@
   <script>
     (() => {
       const upgrades = [
-        { id: "spoon", name: "A Better Spoon", icon: "🥄", description: "+1 bean with every click", baseCost: 15, rate: 1, kind: "click" },
-        { id: "biscuit", name: "Emergency Biscuit Tin", icon: "🍪", description: "+1 bean per second", baseCost: 25, rate: 1, kind: "auto" },
-        { id: "kettle", name: "The Office Kettle", icon: "🫖", description: "+5 beans per second", baseCost: 100, rate: 5, kind: "auto" },
-        { id: "allotment", name: "A Proper Allotment", icon: "🌱", description: "+20 beans per second", baseCost: 500, rate: 20, kind: "auto" },
-        { id: "bakery", name: "The Village Bakery", icon: "🥧", description: "+75 beans per second", baseCost: 2500, rate: 75, kind: "auto" },
-        { id: "bus", name: "The Bean Double-Decker", icon: "🚌", description: "+250 beans per second", baseCost: 12500, rate: 250, kind: "auto" },
-        { id: "pub", name: "The Crown & Bean", icon: "🍺", description: "+1,000 beans per second", baseCost: 80000, rate: 1000, kind: "auto" },
-        { id: "factory", name: "Her Majesty's Bean Works", icon: "🏭", description: "+5,000 beans per second", baseCost: 500000, rate: 5000, kind: "auto" }
+        { id: "spoon", name: "A Better Spoon", icon: "🥄", description: "+1 bean with every click", baseCost: 20, rate: 1, kind: "click" },
+        { id: "biscuit", name: "Emergency Biscuit Tin", icon: "🍪", description: "+1 bean per second", baseCost: 40, rate: 1, kind: "auto" },
+        { id: "kettle", name: "The Office Kettle", icon: "🫖", description: "+4 beans per second", baseCost: 175, rate: 4, kind: "auto" },
+        { id: "allotment", name: "A Proper Allotment", icon: "🌱", description: "+15 beans per second", baseCost: 900, rate: 15, kind: "auto" },
+        { id: "bakery", name: "The Village Bakery", icon: "🥧", description: "+60 beans per second", baseCost: 4500, rate: 60, kind: "auto" },
+        { id: "bus", name: "The Bean Double-Decker", icon: "🚌", description: "+220 beans per second", baseCost: 22000, rate: 220, kind: "auto" },
+        { id: "pub", name: "The Crown & Bean", icon: "🍺", description: "+850 beans per second", baseCost: 140000, rate: 850, kind: "auto" },
+        { id: "factory", name: "Her Majesty's Bean Works", icon: "🏭", description: "+4,000 beans per second", baseCost: 900000, rate: 4000, kind: "auto" }
+      ];
+      const beanColours = {
+        classic: { name: "Classic", light: "#c75b35", middle: "#96391f", dark: "#612818", outline: "#6f2c19", shine: "#ffcca0" },
+        golden: { name: "Golden", light: "#f4d36a", middle: "#c28a32", dark: "#79501b", outline: "#8e5d20", shine: "#fff0a8" },
+        garden: { name: "Garden", light: "#8abf70", middle: "#4f8b4b", dark: "#285438", outline: "#315c42", shine: "#d1f0a9" },
+        blueberry: { name: "Blueberry", light: "#92a9df", middle: "#5969ad", dark: "#343e7a", outline: "#343e7a", shine: "#d8e6ff" },
+        plum: { name: "Plum", light: "#bd83bd", middle: "#89578f", dark: "#653d78", outline: "#653d78", shine: "#f0c6ec" },
+        pearl: { name: "Pearl", light: "#fff8df", middle: "#d8d1b7", dark: "#a7a18c", outline: "#8d8979", shine: "#ffffff" },
+        cocoa: { name: "Cocoa", light: "#b98562", middle: "#81583f", dark: "#51352d", outline: "#51352d", shine: "#e5b995" },
+        roseCoat: { name: "Rose", light: "#f0a1a9", middle: "#c85870", dark: "#843647", outline: "#843647", shine: "#ffe0d9" },
+        mintCoat: { name: "Mint", light: "#a9e4c2", middle: "#54a886", dark: "#27634f", outline: "#27634f", shine: "#e0ffe9" },
+        nebulaCoat: { name: "Nebula", light: "#f0a4ff", middle: "#9a48cd", dark: "#44246f", outline: "#44246f", shine: "#ffe0ff", glow: "#d273ff" },
+        auroraCoat: { name: "Aurora", light: "#a6fff0", middle: "#31bca9", dark: "#12645f", outline: "#12645f", shine: "#ddfff8", glow: "#55ffe0" },
+        sapphireCoat: { name: "Sapphire", light: "#83d5ff", middle: "#2467ca", dark: "#172f75", outline: "#172f75", shine: "#d9f4ff" },
+        solarCoat: { name: "Solar Flare", light: "#ffe88a", middle: "#f07835", dark: "#9e2e5b", outline: "#792c59", shine: "#fff6cf", glow: "#ff9b42" }
+      };
+      const beanDecorations = { none: true, crown: true, bowler: true, spectacles: true, monocle: true, scarf: true, flower: true, moustache: true, bikini: true };
+      const decorationLabels = {
+        none: "None", crown: "Crown", bowler: "Bowler hat", spectacles: "Spectacles",
+        monocle: "Monocle", scarf: "Scarf", flower: "Flower pin", moustache: "Moustache",
+        bikini: "Rose-pink bikini"
+      };
+      const decorationIcons = {
+        none: "✕", crown: "♛", bowler: "🎩", spectacles: "◉", monocle: "◉",
+        scarf: "〰", flower: "✿", moustache: "〰", bikini: "♢"
+      };
+      const cosmeticProducts = [
+        { id: "crown", name: "Crown", kind: "decoration", cost: 1 },
+        { id: "bowler", name: "Bowler hat", kind: "decoration", cost: 1 },
+        { id: "spectacles", name: "Spectacles", kind: "decoration", cost: 1 },
+        { id: "monocle", name: "Monocle", kind: "decoration", cost: 1 },
+        { id: "scarf", name: "Scarf", kind: "decoration", cost: 1 },
+        { id: "flower", name: "Flower pin", kind: "decoration", cost: 1 },
+        { id: "moustache", name: "Moustache", kind: "decoration", cost: 1 },
+        { id: "bikini", name: "Rose-pink bikini", kind: "decoration", cost: 1 },
+        { id: "roseCoat", name: "Rose bean coat", kind: "color", cost: 1 },
+        { id: "mintCoat", name: "Mint bean coat", kind: "color", cost: 1 },
+        { id: "nebulaCoat", name: "Nebula bean coat", kind: "color", cost: 1 },
+        { id: "auroraCoat", name: "Aurora bean coat", kind: "color", cost: 1 },
+        { id: "sapphireCoat", name: "Sapphire bean coat", kind: "color", cost: 1 },
+        { id: "solarCoat", name: "Solar Flare bean coat", kind: "color", cost: 1 }
       ];
       const royalUpgrades = [
-        { id: "royalWarrant", name: "Royal Bean Warrant", icon: "📜", description: "+25% to all bean gains per level", baseCost: 1, kind: "all" },
-        { id: "crownKettle", name: "The Crown's Kettle", icon: "👑", description: "+50% passive production per level", baseCost: 2, kind: "passive" },
-        { id: "goldenSpoon", name: "The Golden Spoon", icon: "🥄", description: "+5 beans per click per level", baseCost: 3, kind: "click" }
+        { id: "royalWarrant", name: "Royal Bean Warrant", icon: "📜", description: "+15% to all bean gains per level", baseCost: 2, kind: "all" },
+        { id: "crownKettle", name: "The Crown's Kettle", icon: "👑", description: "+25% passive production per level", baseCost: 2, kind: "passive" },
+        { id: "goldenSpoon", name: "The Golden Spoon", icon: "🥄", description: "+2 beans per click per level", baseCost: 2, kind: "click" },
+        { id: "royalGranary", name: "The Royal Granary", icon: "🏰", description: "+10% passive production per level", baseCost: 3, kind: "granary" },
+        { id: "beanCharter", name: "The Bean Charter", icon: "📯", description: "+5% to all bean gains per level", baseCost: 3, kind: "all" },
+        { id: "silverThimble", name: "The Silver Thimble", icon: "🧤", description: "+3 beans per click per level", baseCost: 3, kind: "click" }
+      ];
+      const ascensionUpgrades = [
+        { id: "beanAlmanac", name: "The Eternal Almanac", icon: "📖", description: "+10% to all bean gains per level", baseCost: 2, maxLevel: 10, kind: "all" },
+        { id: "endlessHarvest", name: "Everlasting Harvest", icon: "🌾", description: "+20% passive production per level", baseCost: 2, maxLevel: 10, kind: "passive" },
+        { id: "quickHands", name: "Hands of the Harvester", icon: "✨", description: "+1 bean per click per level", baseCost: 1, maxLevel: 10, kind: "click" }
       ];
       const quotes = [
         "“A bean in the hand is worth two in the tin.” — probably someone's nan",
@@ -287,6 +481,10 @@
       ];
       const elements = {
         count: document.getElementById("bean-count"),
+        progressBeans: document.getElementById("progress-beans"),
+        progressRebirths: document.getElementById("progress-rebirths"),
+        progressAscensions: document.getElementById("progress-ascensions"),
+        progressPounds: document.getElementById("progress-pounds"),
         perClick: document.getElementById("per-click"),
         perSecond: document.getElementById("per-second"),
         total: document.getElementById("total-earned"),
@@ -297,16 +495,45 @@
         save: document.getElementById("save-note")
       };
       const numberFormat = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 1 });
+      const compactNumberFormat = new Intl.NumberFormat("en-GB", { notation: "compact", maximumFractionDigits: 1 });
       const makeOwned = (items) => Object.fromEntries(items.map((item) => [item.id, 0]));
       const freshState = () => ({
-        beans: 0, lifetimeEarned: 0, sealMilestonesEarned: 0,
-        owned: makeOwned(upgrades), royalSeals: 0, royalOwned: makeOwned(royalUpgrades)
+        beans: 0, lifetimeEarned: 0, sealMilestonesEarned: 0, rebirthCount: 0,
+        owned: makeOwned(upgrades), unlockedUpgrades: [], royalSeals: 0, royalOwned: makeOwned(royalUpgrades),
+        beanColor: "classic", beanDecoration: "none",
+        ascensions: 0, ascensionPoints: 0, poundNotes: 0, ascensionOwned: makeOwned(ascensionUpgrades), cosmeticsOwned: []
       });
       let state = freshState();
       let toastTimer;
+      let renderedBeanColor = null;
+      let renderedBeanDecoration = null;
 
       try {
         const saved = JSON.parse(localStorage.getItem("beanThereDoneThat"));
+        if (saved && Object.hasOwn(beanColours, saved.beanColor)) state.beanColor = saved.beanColor;
+        if (saved && Object.hasOwn(beanDecorations, saved.beanDecoration)) state.beanDecoration = saved.beanDecoration;
+        if (saved) {
+          state.ascensions = Number.isSafeInteger(saved.ascensions) && saved.ascensions >= 0 ? saved.ascensions : 0;
+          state.ascensionPoints = Number.isSafeInteger(saved.ascensionPoints) && saved.ascensionPoints >= 0 ? saved.ascensionPoints : 0;
+          state.poundNotes = Number.isSafeInteger(saved.poundNotes) && saved.poundNotes >= 0 ? saved.poundNotes : 0;
+          state.rebirthCount = Number.isSafeInteger(saved.rebirthCount) && saved.rebirthCount >= 0 ? saved.rebirthCount : 0;
+          state.unlockedUpgrades = Array.isArray(saved.unlockedUpgrades)
+            ? saved.unlockedUpgrades.filter((id) => upgrades.some((upgrade) => upgrade.id === id))
+            : [];
+          state.cosmeticsOwned = Array.isArray(saved.cosmeticsOwned)
+            ? saved.cosmeticsOwned.filter((id) => cosmeticProducts.some((product) => product.id === id))
+            : [];
+          const colorProduct = cosmeticProducts.find((product) => product.kind === "color" && product.id === state.beanColor);
+          const decorationProduct = cosmeticProducts.find((product) => product.kind === "decoration" && product.id === state.beanDecoration);
+          if (colorProduct && !state.cosmeticsOwned.includes(colorProduct.id)) state.beanColor = "classic";
+          if (decorationProduct && !state.cosmeticsOwned.includes(decorationProduct.id)) state.beanDecoration = "none";
+          for (const upgrade of ascensionUpgrades) {
+            const owned = saved.ascensionOwned && saved.ascensionOwned[upgrade.id];
+            state.ascensionOwned[upgrade.id] = Number.isSafeInteger(owned) && owned >= 0
+              ? Math.min(owned, upgrade.maxLevel)
+              : 0;
+          }
+        }
         if (saved && Number.isFinite(saved.beans) && saved.beans >= 0) {
           state.beans = saved.beans;
           state.lifetimeEarned = Number.isFinite(saved.lifetimeEarned) && saved.lifetimeEarned >= 0
@@ -331,23 +558,26 @@
 
       function ratePerSecond() {
         const baseRate = upgrades.reduce((sum, upgrade) => sum + (upgrade.kind === "auto" ? state.owned[upgrade.id] * upgrade.rate : 0), 0);
-        return baseRate * globalMultiplier() * (1 + state.royalOwned.crownKettle * 0.5);
+        const ascensionPassive = 1 + state.ascensionOwned.endlessHarvest * 0.2;
+        const royalPassive = 1 + state.royalOwned.crownKettle * 0.25 + state.royalOwned.royalGranary * 0.1;
+        return baseRate * globalMultiplier() * ascensionPassive * royalPassive;
       }
 
       function clickPower() {
-        const basePower = 1 + state.owned.spoon + state.royalOwned.goldenSpoon * 5;
+        const basePower = 1 + state.owned.spoon + state.royalOwned.goldenSpoon * 2 + state.royalOwned.silverThimble * 3 + state.ascensionOwned.quickHands;
         return basePower * globalMultiplier();
       }
 
       function globalMultiplier() {
-        return 1 + state.royalOwned.royalWarrant * 0.25;
+        return 1 + state.royalOwned.royalWarrant * 0.15 + state.royalOwned.beanCharter * 0.05 + state.ascensionOwned.beanAlmanac * 0.1;
       }
 
       function price(upgrade) {
-        return Math.floor(upgrade.baseCost * Math.pow(1.17, state.owned[upgrade.id]));
+        return Math.floor(upgrade.baseCost * Math.pow(1.22, state.owned[upgrade.id]));
       }
 
       function renderShop() {
+        let discoveredUpgrade = false;
         if (elements.shop.children.length !== upgrades.length) {
           elements.shop.replaceChildren();
           for (const upgrade of upgrades) {
@@ -363,12 +593,28 @@
         }
         for (const upgrade of upgrades) {
           const cost = price(upgrade);
-          const button = elements.shop.children[upgrades.indexOf(upgrade)];
-          button.disabled = state.beans < cost;
-          button.setAttribute("aria-label", `${upgrade.name}, costs ${numberFormat.format(cost)} beans`);
+          const index = upgrades.indexOf(upgrade);
+          const previousPurchased = index === 0 || state.owned[upgrades[index - 1].id] > 0;
+          const alreadyDiscovered = state.unlockedUpgrades.includes(upgrade.id) || state.owned[upgrade.id] > 0;
+          const unlocked = alreadyDiscovered || (previousPurchased && state.beans >= cost);
+          const button = elements.shop.children[index];
+          if (unlocked && !alreadyDiscovered) {
+            state.unlockedUpgrades.push(upgrade.id);
+            discoveredUpgrade = true;
+          }
+          button.disabled = !unlocked || state.beans < cost;
+          button.classList.toggle("is-locked", !unlocked);
+          button.classList.toggle("is-affordable", unlocked && !button.disabled);
+          button.setAttribute("aria-label", unlocked
+            ? `${upgrade.name}, costs ${numberFormat.format(cost)} beans`
+            : `Undiscovered upgrade, costs ${numberFormat.format(cost)} beans. Purchase the previous upgrade and hold enough beans to reveal it.`);
+          button.querySelector(".upgrade-icon").textContent = unlocked ? upgrade.icon : "?";
+          button.querySelector(".upgrade-name").textContent = unlocked ? upgrade.name : "???";
+          button.querySelector(".upgrade-desc").textContent = unlocked ? upgrade.description : "Undiscovered upgrade";
           button.querySelector(".upgrade-cost").textContent = numberFormat.format(cost);
-          button.querySelector(".upgrade-level").textContent = `Owned: ${state.owned[upgrade.id]}`;
+          button.querySelector(".upgrade-level").textContent = unlocked ? `Owned: ${state.owned[upgrade.id]}` : "Locked";
         }
+        if (discoveredUpgrade) save();
       }
 
       function renderRoyalShop() {
@@ -387,9 +633,10 @@
           }
         }
         for (const upgrade of royalUpgrades) {
-          const cost = Math.floor(upgrade.baseCost * Math.pow(2, state.royalOwned[upgrade.id]));
+          const cost = Math.floor(upgrade.baseCost * Math.pow(1.8, state.royalOwned[upgrade.id]));
           const button = list.children[royalUpgrades.indexOf(upgrade)];
           button.disabled = state.royalSeals < cost;
+          button.classList.toggle("is-affordable", !button.disabled);
           button.setAttribute("aria-label", `${upgrade.name}, costs ${numberFormat.format(cost)} royal seals`);
           button.querySelector(".upgrade-cost").textContent = `${numberFormat.format(cost)} seal${cost === 1 ? "" : "s"}`;
           button.querySelector(".upgrade-level").textContent = `Owned: ${state.royalOwned[upgrade.id]}`;
@@ -416,13 +663,174 @@
         renderRoyalShop();
       }
 
+      function renderAscensionShop() {
+        const pointCount = document.getElementById("ascension-point-count");
+        pointCount.textContent = `✦ ${numberFormat.format(state.ascensionPoints)} Ascension point${state.ascensionPoints === 1 ? "" : "s"}`;
+        document.getElementById("ascension-total-count").textContent = `Ascensions: ${numberFormat.format(state.ascensions)}`;
+        document.getElementById("pound-note-count").textContent = `${numberFormat.format(state.poundNotes)} × £5 notes (£${numberFormat.format(state.poundNotes * 5)} total)`;
+        const status = document.getElementById("ascension-status");
+        const button = document.getElementById("ascend-button");
+        const remaining = Math.max(0, 100 - state.rebirthCount);
+        status.textContent = remaining === 0
+          ? "The Crown is ready to grant your ascension."
+          : `${numberFormat.format(remaining)} rebirth${remaining === 1 ? "" : "s"} needed. Rebirths this run: ${numberFormat.format(state.rebirthCount)} / 100.`;
+        button.disabled = remaining > 0;
+        button.textContent = remaining === 0 ? "Ascend for 10 points and 5 × £5 notes" : `Ascend after ${numberFormat.format(remaining)} more rebirth${remaining === 1 ? "" : "s"}`;
+
+        const tree = document.getElementById("ascension-tree");
+        if (tree.children.length !== ascensionUpgrades.length) {
+          tree.replaceChildren();
+          for (const upgrade of ascensionUpgrades) {
+            const item = document.createElement("button");
+            item.className = "upgrade";
+            item.type = "button";
+            item.innerHTML = `<span class="upgrade-icon" aria-hidden="true">${upgrade.icon}</span>
+              <span><span class="upgrade-name">${upgrade.name}</span><span class="upgrade-desc">${upgrade.description}</span></span>
+              <span class="upgrade-price"><span class="upgrade-cost"></span><span class="upgrade-level"></span></span>`;
+            item.addEventListener("click", () => buyAscensionUpgrade(upgrade));
+            tree.append(item);
+          }
+        }
+        for (const upgrade of ascensionUpgrades) {
+          const level = state.ascensionOwned[upgrade.id];
+          const cost = upgrade.baseCost + level;
+          const button = tree.children[ascensionUpgrades.indexOf(upgrade)];
+          button.disabled = level >= upgrade.maxLevel || state.ascensionPoints < cost;
+          button.classList.toggle("is-affordable", !button.disabled);
+          button.setAttribute("aria-label", `${upgrade.name}, level ${level} of ${upgrade.maxLevel}, costs ${cost} Ascension points`);
+          button.querySelector(".upgrade-cost").textContent = level >= upgrade.maxLevel ? "MAX" : `${cost} point${cost === 1 ? "" : "s"}`;
+          button.querySelector(".upgrade-level").textContent = `Level: ${level} / ${upgrade.maxLevel}`;
+        }
+      }
+
       function render() {
-        elements.count.textContent = numberFormat.format(state.beans);
+        const exactBeanCount = numberFormat.format(state.beans);
+        let displayBeanCount = exactBeanCount.length > 16 ? compactNumberFormat.format(state.beans) : exactBeanCount;
+        if (displayBeanCount.length > 16) displayBeanCount = state.beans.toExponential(1);
+        elements.count.textContent = displayBeanCount;
+        elements.count.title = `${exactBeanCount} beans`;
+        elements.progressBeans.textContent = displayBeanCount;
+        elements.progressBeans.title = `${exactBeanCount} beans`;
+        elements.progressRebirths.textContent = numberFormat.format(state.rebirthCount);
+        elements.progressAscensions.textContent = numberFormat.format(state.ascensions);
+        elements.progressPounds.textContent = `£${numberFormat.format(state.poundNotes * 5)}`;
+        elements.progressPounds.title = `${numberFormat.format(state.poundNotes)} £5 notes`;
+        elements.count.style.fontSize = "";
+        let beanCountSize = parseFloat(getComputedStyle(elements.count).fontSize);
+        while (elements.count.scrollWidth > elements.count.clientWidth && beanCountSize > 16) {
+          beanCountSize -= 1;
+          elements.count.style.fontSize = `${beanCountSize}px`;
+        }
         elements.perClick.textContent = numberFormat.format(clickPower());
         elements.perSecond.textContent = numberFormat.format(ratePerSecond());
         elements.total.textContent = numberFormat.format(state.lifetimeEarned);
         renderShop();
         renderRebirth();
+        renderBeanCustomization();
+        renderAscensionShop();
+      }
+
+      function renderBeanCustomization() {
+        if (state.beanColor !== renderedBeanColor) {
+          const beanArt = document.querySelector(".bean-art");
+          const colours = beanColours[state.beanColor];
+          beanArt.style.setProperty("--bean-light", colours.light);
+          beanArt.style.setProperty("--bean-middle", colours.middle);
+          beanArt.style.setProperty("--bean-dark", colours.dark);
+          beanArt.style.setProperty("--bean-outline", colours.outline);
+          beanArt.style.setProperty("--bean-shine", colours.shine);
+          beanArt.style.filter = colours.glow
+            ? `drop-shadow(0 0 8px ${colours.glow}) drop-shadow(0 0 18px ${colours.glow}) drop-shadow(0 12px 7px rgba(58,48,29,.22))`
+            : "";
+          renderedBeanColor = state.beanColor;
+        }
+        if (state.beanDecoration !== renderedBeanDecoration) {
+          document.querySelectorAll("[data-bean-costume]").forEach((costume) => {
+            costume.style.display = costume.dataset.beanCostume === state.beanDecoration ? "" : "none";
+          });
+          renderedBeanDecoration = state.beanDecoration;
+        }
+        const colorOptions = document.getElementById("bean-colours");
+        if (!colorOptions.children.length) {
+          for (const [id, color] of Object.entries(beanColours)) {
+            const option = document.createElement("button");
+            option.className = "custom-option";
+            option.type = "button";
+            option.dataset.beanColor = id;
+            option.setAttribute("aria-pressed", "false");
+            const art = document.createElement("span");
+            art.className = "custom-option-art";
+            art.setAttribute("aria-hidden", "true");
+            const swatch = document.createElement("span");
+            swatch.className = "custom-option-swatch";
+            swatch.style.background = `linear-gradient(135deg,${color.light},${color.dark})`;
+            if (color.glow) swatch.style.boxShadow = `inset 2px 2px 4px rgba(255,255,255,.45), 0 0 12px ${color.glow}`;
+            const price = document.createElement("span");
+            price.className = "custom-option-price";
+            price.setAttribute("aria-hidden", "true");
+            art.append(swatch, price);
+            const label = document.createElement("span");
+            label.className = "custom-option-label";
+            label.textContent = color.name;
+            option.append(art, label);
+            colorOptions.append(option);
+          }
+        }
+
+        const decorations = document.getElementById("bean-decorations");
+        if (!decorations.children.length) {
+          for (const [id, labelText] of Object.entries(decorationLabels)) {
+            const option = document.createElement("button");
+            option.className = "custom-option";
+            option.type = "button";
+            option.dataset.beanDecoration = id;
+            option.setAttribute("aria-pressed", "false");
+            const art = document.createElement("span");
+            art.className = "custom-option-art";
+            art.setAttribute("aria-hidden", "true");
+            const icon = document.createElement("span");
+            icon.textContent = decorationIcons[id];
+            const price = document.createElement("span");
+            price.className = "custom-option-price";
+            price.setAttribute("aria-hidden", "true");
+            art.append(icon, price);
+            const label = document.createElement("span");
+            label.className = "custom-option-label";
+            label.textContent = labelText;
+            option.append(art, label);
+            decorations.append(option);
+          }
+        }
+        colorOptions.querySelectorAll("[data-bean-color]").forEach((button) => {
+          const id = button.dataset.beanColor;
+          const product = cosmeticProducts.find((item) => item.kind === "color" && item.id === id);
+          const owned = !product || state.cosmeticsOwned.includes(product.id);
+          const price = button.querySelector(".custom-option-price");
+          button.disabled = Boolean(product && !owned && state.poundNotes < product.cost);
+          button.classList.toggle("is-locked", !owned);
+          price.hidden = owned;
+          if (product) price.textContent = `£${product.cost * 5}`;
+          button.setAttribute("aria-label", owned
+            ? `${beanColours[id].name} bean colour${id === state.beanColor ? ", selected" : ""}`
+            : `${beanColours[id].name} bean colour, costs £${product.cost * 5}${button.disabled ? ", not enough £5 notes" : ", activate to buy"}`);
+          const pressed = String(button.dataset.beanColor === state.beanColor);
+          button.setAttribute("aria-pressed", pressed);
+        });
+        decorations.querySelectorAll("[data-bean-decoration]").forEach((button) => {
+          const id = button.dataset.beanDecoration;
+          const product = cosmeticProducts.find((item) => item.kind === "decoration" && item.id === id);
+          const owned = !product || state.cosmeticsOwned.includes(product.id);
+          const price = button.querySelector(".custom-option-price");
+          button.disabled = Boolean(product && !owned && state.poundNotes < product.cost);
+          button.classList.toggle("is-locked", !owned);
+          price.hidden = owned;
+          if (product) price.textContent = `£${product.cost * 5}`;
+          button.setAttribute("aria-label", owned
+            ? `${decorationLabels[id]} decoration${id === state.beanDecoration ? ", selected" : ""}`
+            : `${decorationLabels[id]} decoration, costs £${product.cost * 5}${button.disabled ? ", not enough £5 notes" : ", activate to buy"}`);
+          const pressed = String(button.dataset.beanDecoration === state.beanDecoration);
+          button.setAttribute("aria-pressed", pressed);
+        });
       }
 
       function save() {
@@ -446,7 +854,6 @@
         if (state.beans < cost) return;
         state.beans -= cost;
         state.owned[upgrade.id] += 1;
-        if (upgrade.kind === "click") state.clickPower += upgrade.rate;
         elements.quote.textContent = quotes[Math.floor(Math.random() * quotes.length)];
         showToast(`${upgrade.name}. A splendid purchase.`);
         render();
@@ -454,7 +861,7 @@
       }
 
       function buyRoyal(upgrade) {
-        const cost = Math.floor(upgrade.baseCost * Math.pow(2, state.royalOwned[upgrade.id]));
+        const cost = Math.floor(upgrade.baseCost * Math.pow(1.8, state.royalOwned[upgrade.id]));
         if (state.royalSeals < cost) return;
         state.royalSeals -= cost;
         state.royalOwned[upgrade.id] += 1;
@@ -472,7 +879,47 @@
         state.sealMilestonesEarned = milestones;
         state.beans = 0;
         state.owned = makeOwned(upgrades);
+        state.rebirthCount += 1;
         showToast(`A fresh start! The Crown grants ${numberFormat.format(reward)} royal seal${reward === 1 ? "" : "s"}.`);
+        render();
+        save();
+      }
+
+      function buyAscensionUpgrade(upgrade) {
+        const level = state.ascensionOwned[upgrade.id];
+        const cost = upgrade.baseCost + level;
+        if (level >= upgrade.maxLevel || state.ascensionPoints < cost) return;
+        state.ascensionPoints -= cost;
+        state.ascensionOwned[upgrade.id] += 1;
+        showToast(`${upgrade.name} improved. The bean remembers.`);
+        render();
+        save();
+      }
+
+      function buyCosmetic(product) {
+        if (state.cosmeticsOwned.includes(product.id) || state.poundNotes < product.cost) return;
+        state.poundNotes -= product.cost;
+        state.cosmeticsOwned.push(product.id);
+        if (product.kind === "color") state.beanColor = product.id;
+        else state.beanDecoration = product.id;
+        showToast(`${product.name} is yours. A most stylish bean.`);
+        render();
+        save();
+      }
+
+      function ascend() {
+        if (state.rebirthCount < 100) return;
+        state.ascensions += 1;
+        state.ascensionPoints += 10;
+        state.poundNotes += 5;
+        state.beans = 0;
+        state.lifetimeEarned = 0;
+        state.sealMilestonesEarned = 0;
+        state.rebirthCount = 0;
+        state.owned = makeOwned(upgrades);
+        state.royalSeals = 0;
+        state.royalOwned = makeOwned(royalUpgrades);
+        showToast("Ascension complete! The bean begins anew, with 10 points and five £5 notes.");
         render();
         save();
       }
@@ -507,6 +954,13 @@
           item.tabIndex = selected ? 0 : -1;
           document.getElementById(item.getAttribute("aria-controls")).hidden = !selected;
         }
+        const titleByTab = {
+          "tab-high-street": "Upgrades",
+          "tab-rebirth": "Rebirths",
+          "tab-ascension": "Ascensions",
+          "tab-bean-style": "Bean Style"
+        };
+        document.getElementById("shop-title").textContent = titleByTab[tab.id];
       }
 
       const shopTabs = [...document.querySelectorAll('[role="tab"]')];
@@ -526,8 +980,34 @@
         });
       }
 
+      document.getElementById("bean-colours").addEventListener("click", (event) => {
+        const button = event.target.closest("[data-bean-color]");
+        if (!button) return;
+        const product = cosmeticProducts.find((item) => item.kind === "color" && item.id === button.dataset.beanColor);
+        if (product && !state.cosmeticsOwned.includes(product.id)) {
+          buyCosmetic(product);
+          return;
+        }
+        state.beanColor = button.dataset.beanColor;
+        renderBeanCustomization();
+        save();
+      });
+      document.getElementById("bean-decorations").addEventListener("click", (event) => {
+        const button = event.target.closest("[data-bean-decoration]");
+        if (!button) return;
+        const product = cosmeticProducts.find((item) => item.kind === "decoration" && item.id === button.dataset.beanDecoration);
+        if (product && !state.cosmeticsOwned.includes(product.id)) {
+          buyCosmetic(product);
+          return;
+        }
+        state.beanDecoration = button.dataset.beanDecoration;
+        renderBeanCustomization();
+        save();
+      });
+
       document.getElementById("bean-button").addEventListener("click", clickBean);
       document.getElementById("rebirth-button").addEventListener("click", rebirth);
+      document.getElementById("ascend-button").addEventListener("click", ascend);
       let previousTick = Date.now();
       setInterval(() => {
         const now = Date.now();
